@@ -9,6 +9,8 @@
 # should be a corresponding call to simxFinish at the end!
 import Lab1_Agents_Task1_World as World
 from random import randint
+import numpy as np
+
 # connect to the server
 robot = World.init()
 # print important parts of the robot
@@ -16,12 +18,37 @@ print(sorted(robot.keys()))
 timeSinceLastPickup = 0
 timeStuck = 0
 index = 0
+reverseOfPreviousActions = []
+
+def returnToPreviousState():
+    for reverseOfPreviosAction in reverseOfPreviousActions:
+        World.execute(reverseOfPreviosAction["motorspeed"], reverseOfPreviosAction["simulationTime"], reverseOfPreviosAction["clockSpeed"])
+    reverseOfPreviousActions.clear()
+
+def readSensorData():
+    sensorData = dict(sensorLeft= World.getSensorReading("ultraSonicSensorLeft"), sensorRight = World.getSensorReading("ultraSonicSensorRight"))
+    if sensorData["sensorLeft"] == float("inf"):
+        sensorData["sensorLeft"] = 1.1
+        
+    if sensorData["sensorRight"] == float("inf"):
+        sensorData["sensorRight"] = 1.1
+    return sensorData
+
+def calcRepulsingForceVector(currentSensorData):
+    repulsingVectorDir = [1/currentSensorData["sensorLeft"],1/currentSensorData["sensorRight"]]
+    
+
+def calcAttractingForceVector(energyBlocks):
+    directionToNearestEnergyBlock = energyBlocks[index][3]
+    distanceToNearestEnergyBlock = energyBlocks[index][2]
 
 
-def trySolveBeingStuck():
-    randChoice = (-1)**randint(0,1)
-    World.execute(dict(speedLeft= randChoice, speedRight= -randChoice),500,-1)
-    World.execute(dict(speedLeft= 2, speedRight= 2),5000,-1)
+def calcDirectionToMove(retractingForceVector, attractingForceVector):
+
+    finalForceVector = retractingForceVector + attractingForceVector
+
+    
+    
 
 while robot: # main Control loop
     #######################################################
@@ -54,33 +81,40 @@ while robot: # main Control loop
     #     timeSinceLastPickup = World.getSimulationTime()
 
     # Check if driving straight into a wall
-    if sensorData["sensorLeft"] < 0.2 and sensorData["sensorRight"] < 0.2:
-        timeStuck +=1
-        print("Stucktick: %s" %(timeStuck))
-        if timeStuck == 20:
-            index += 1
-            #trySolveBeingStuck()
-            timeStuck=0
-            
-    if sensorData["sensorLeft"] == float("inf"):
-        sensorData["sensorLeft"] = 1.1
+    currentSensorData=readSensorData()
+
+    retractingForceVec = calcRepulsingForceVector(currentSensorData)
+    retractingForceVec = calcAttractingForceVector(energyBlocks)   
+
+    targetDirection = calcDirectionToMove(retractingForceVec, retractingForceVec)
         
-    if sensorData["sensorRight"] == float("inf"):
-        sensorData["sensorRight"] = 1.1
-        
+    
     if distanceToNearestEnergyBlock < 0.5:
         motorSpeed = dict(speedLeft=0, speedRight=0)
         World.collectNearestBlock()
         index =0
         timeSinceLastPickup = World.getSimulationTime()
     elif round(directionToNearestEnergyBlock,1) < 0 :
-        motorSpeed = dict(speedLeft= directionToNearestEnergyBlock , speedRight=-directionToNearestEnergyBlock )
+        World.execute(dict(speedLeft= directionToNearestEnergyBlock , speedRight=-directionToNearestEnergyBlock ),50,-1)
+        reverseOfPreviousActions.append(dict(motorspeed=dict(speedLeft= -directionToNearestEnergyBlock , speedRight=directionToNearestEnergyBlock ),simulationTime=50,clockSpeed=-1))
+       # motorSpeed = dict(speedLeft= directionToNearestEnergyBlock , speedRight=-directionToNearestEnergyBlock )
         
     elif round(directionToNearestEnergyBlock,1) > 0 :
-        motorSpeed = dict(speedLeft= directionToNearestEnergyBlock, speedRight=-directionToNearestEnergyBlock)
+        World.execute(dict(speedLeft= directionToNearestEnergyBlock , speedRight=-directionToNearestEnergyBlock),50,-1)
+        reverseOfPreviousActions.append(dict(motorspeed=dict(speedLeft= -directionToNearestEnergyBlock , speedRight=directionToNearestEnergyBlock ),simulationTime=50,clockSpeed=-1))
     else:
-        motorSpeed = dict(speedLeft=sensorData["sensorLeft"] *3, speedRight=sensorData["sensorRight"]* 3 )
-        
+        World.execute(dict(speedLeft= (-0.5) + currentSensorData["sensorLeft"] * 3, speedRight= (-0.5) + currentSensorData["sensorRight"] * 3 ),50,-1)
+        reverseOfPreviousActions.append(dict(motorspeed=dict(speedLeft=-currentSensorData["sensorLeft"] *3, speedRight=-currentSensorData["sensorRight"]* 3 ),simulationTime=50,clockSpeed=-1))
+       # motorSpeed = dict(speedLeft=sensorData["sensorLeft"] *3, speedRight=sensorData["sensorRight"]* 3 )
+    
+
+    if currentSensorData["sensorLeft"] < 0.2 and currentSensorData["sensorRight"] < 0.2:
+        timeStuck +=1
+        print("Stucktick: %s" %(timeStuck))
+    if timeStuck == 20:
+        #index += 1
+        returnToPreviousState()
+        timeStuck=0
    
     
 
@@ -90,7 +124,7 @@ while robot: # main Control loop
     # Action Phase: Assign speed to wheels #
     ########################################
     # assign speed to the wheels
-    World.setMotorSpeeds(motorSpeed)
+    #World.setMotorSpeeds(motorSpeed)
     # try to collect energy block (will fail if not within range)
     if simulationTime%10000==0:
         print ("Trying to collect a block...",World.collectNearestBlock())

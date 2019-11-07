@@ -8,13 +8,14 @@
 # IMPORTANT: for each successful call to simxStart, there
 # should be a corresponding call to simxFinish at the end!
 import Lab1_Agents_Task1_World as World
-# connect to the server
+
+# connect to the serverclear
 robot = World.init()
 # print important parts of the robot
 print(sorted(robot.keys()))
 
 while robot: # main Control loop
-    #######################################################
+    #######################################################clear
     # Perception Phase: Get information about environment #
     #######################################################
     simulationTime = World.getSimulationTime()
