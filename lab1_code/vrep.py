@@ -19,9 +19,7 @@ try:
     else:
         file_extension = '.so'
     libfullpath = os.path.join(os.path.dirname(__file__), 'remoteApi' + file_extension)
-    print("2222==================" + libfullpath)
     libsimx = ct.CDLL(libfullpath)
-    print("3333==============" + libsimx)
 except:
     print ('----------------------------------------------------')
     print ('The remoteApi library could not be loaded. Make sure')

@@ -19,6 +19,19 @@ timeSinceLastPickup = 0
 timeStuck = 0
 index = 0
 reverseOfPreviousActions = []
+clientID = 0 
+
+##----COPIED FROM Lab1_Agents_Task1_World.py TO BE ABLE TO USE IT ON OTHER SENSORS THAN 3 and 5----
+def getObstacleDist(sensorHandler_):
+        # Get raw sensor readings using API
+        rawSR = World.vrep.simxReadProximitySensor(clientID, sensorHandler_, World.vrep.simx_opmode_oneshot_wait)
+        #print(rawSR)
+        # Calculate Euclidean distance
+        if rawSR[1]: # if true, obstacle is within detection range, return distance to obstacle
+            return World.math.sqrt(rawSR[2][0]*rawSR[2][0] + rawSR[2][1]*rawSR[2][1] + rawSR[2][2]*rawSR[2][2])
+        else: # if false, obstacle out of detection range, return inf.
+            return float('inf')
+##------------------------------------------------------------------------------------
 
 def returnToPreviousState():
     for reverseOfPreviosAction in reverseOfPreviousActions:
@@ -34,20 +47,56 @@ def readSensorData():
         sensorData["sensorRight"] = 1.1
     return sensorData
 
-def calcRepulsingForceVector(currentSensorData):
-    repulsingVectorDir = [1/currentSensorData["sensorLeft"],1/currentSensorData["sensorRight"]]
-    
+def readFrontSensors():
+    sensors = []
+    for sensorIndex in range(1,9):
+        ret_s, newSensor = World.vrep.simxGetObjectHandle(0, 'Pioneer_p3dx_ultrasonicSensor%s'%(sensorIndex),World.vrep.simx_opmode_oneshot_wait)
+        sensors.append(dict(index= sensorIndex, distance= getObstacleDist(newSensor)))
+        #print("SENSOR TEST: %s\n %s\n"%(ret_s, newSensor))
+    return sensors
 
-def calcAttractingForceVector(energyBlocks):
-    directionToNearestEnergyBlock = energyBlocks[index][3]
-    distanceToNearestEnergyBlock = energyBlocks[index][2]
+def calcRepulsingForceVector():
+    ultraSonicSensors = readFrontSensors()
+    robotDirection = World.robotDirection()
+    repVec = 0.0
+    repulsiveForceConstant = 0.2
+    for sensor in ultraSonicSensors:
+        if sensor["index"] < 5:
+            repVec += (repulsiveForceConstant * ((World.math.pi/sensor["index"]) + robotDirection )/sensor["distance"])  + World.math.pi/2
+        else:
+            repVec += (repulsiveForceConstant * (robotDirection - (World.math.pi/sensor["index"]))/sensor["distance"]) + World.math.pi
 
+        print("RECVEC: ID %s VALUE %s TYPE:%s"%(sensor["index"],repVec % (World.math.pi * 2),type(repVec)))  
+    return repVec % (World.math.pi * 2)
+
+def calcAttractingForceVector():
+    nearestBlock = World.getSensorReading("energySensor").direction + World.math.pi/2
+    print("ATTVEC:%s"%(nearestBlock))
+    return nearestBlock
 
 def calcDirectionToMove(retractingForceVector, attractingForceVector):
+    finalForceVector = retractingForceVec + attractingForceVector
+    print("NEWDIRECTION: %s" %(finalForceVector))
+    return finalForceVector
 
-    finalForceVector = retractingForceVector + attractingForceVector
+def alignRobotToDirection(newDirection):
+    while round(World.robotDirection(),2) != round(newDirection,2):
+        robotDirection = World.robotDirection()
+        if round(robotDirection,2) < round(newDirection,2):
+            directionDifference =  newDirection - robotDirection
+            World.execute(dict(speedLeft=directionDifference *2, speedRight=-directionDifference *2),40 ,-1)
+            reverseOfPreviousActions.append(dict(motorspeed=dict(speedLeft= 2 , speedRight= -2 ),simulationTime=0,clockSpeed=-1))
 
-    
+            #print("ROBOTDIRECTION: %s   TARGETDIRECTION: %s "%(round(robotDirection,2), round(newDirection,2)))
+            
+        else:
+            directionDifference = robotDirection - newDirection 
+            World.execute(dict(speedLeft=-directionDifference *2 , speedRight=directionDifference *2 ),40,-1)
+            reverseOfPreviousActions.append(dict(motorspeed=dict(speedLeft=directionDifference * 5 , speedRight=-directionDifference * 5),simulationTime=50,clockSpeed=-1))
+
+            #print("ROBOTDIRECTION: %s   TARGETDIRECTION: %s "%(round(robotDirection,2), round(newDirection,2)))
+            
+        
     
 
 while robot: # main Control loop
@@ -81,15 +130,25 @@ while robot: # main Control loop
     #     timeSinceLastPickup = World.getSimulationTime()
 
     # Check if driving straight into a wall
-    currentSensorData=readSensorData()
+    #currentSensorData=readSensorData()
 
-    retractingForceVec = calcRepulsingForceVector(currentSensorData)
-    retractingForceVec = calcAttractingForceVector(energyBlocks)   
+    retractingForceVec = calcRepulsingForceVector()
+    retractingForceVec = calcAttractingForceVector()   
 
     targetDirection = calcDirectionToMove(retractingForceVec, retractingForceVec)
-        
+    if(round(directionOfRobot,2) != round(targetDirection,2)):
+        alignRobotToDirection(targetDirection)
+    World.execute(dict(speedLeft= 4 , speedRight=4 ),1500,-1)
+    World.collectNearestBlock()
     
-    if distanceToNearestEnergyBlock < 0.5:
+    #print("MOVING TO 0: RobotDirection:%s"%(World.robotDirection()))
+    #
+    
+    print("MOVING TO Pi RobotDirection:%s"%(World.robotDirection()))
+    #for energyblock in energyBlocks:
+    #   alignRobotToDirection(energyblock[3] +(World.math.pi/2))
+
+    '''if distanceToNearestEnergyBlock < 0.5:
         motorSpeed = dict(speedLeft=0, speedRight=0)
         World.collectNearestBlock()
         index =0
@@ -115,7 +174,7 @@ while robot: # main Control loop
         #index += 1
         returnToPreviousState()
         timeStuck=0
-   
+    '''
     
 
 
@@ -128,3 +187,11 @@ while robot: # main Control loop
     # try to collect energy block (will fail if not within range)
     if simulationTime%10000==0:
         print ("Trying to collect a block...",World.collectNearestBlock())
+SENSORS: [{'sensorHandle': 35, 'distance': 0.7763301525494896}, 
+{'sensorHandle': 34, 'distance': inf},
+{'sensorHandle': 33, 'distance': inf}, 
+{'sensorHandle': 32, 'distance': 0.9433327344800936}, 
+{'sensorHandle': 31, 'distance': inf}, 
+{'sensorHandle': 30, 'distance': inf}, 
+{'sensorHandle': 29, 'distance': inf}, 
+{'sensorHandle': 28, 'distance': 0.9840285129662414}]

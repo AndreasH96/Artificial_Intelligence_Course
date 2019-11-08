@@ -17,6 +17,7 @@ def getSensorReading(sensor):
         else: # if false, obstacle out of detection range, return inf.
             return float('inf')
     if sensor=="ultraSonicSensorLeft":
+        #print(robot.ultraSonicSensorLeft)
         return getObstacleDist(robot.ultraSonicSensorLeft)
     elif sensor=="ultraSonicSensorRight":
         return getObstacleDist(robot.ultraSonicSensorRight)
