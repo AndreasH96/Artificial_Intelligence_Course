@@ -19,7 +19,7 @@ class PokerPlayer:
         return self.cardHand
 
     def calculateBid(self):
-        pass
+        print("No player type specified")
 
 
 
