@@ -3,6 +3,8 @@ import math
 import random
 import json
 from itertools import product
+from Lab1_Agents_Task2_MemoryAgent import MemoryPokerPlayer
+from Lab1_Agents_Task2_PokerPlayer_Reflex import ReflexPokerPlayer
 from Lab1_Agents_Task2_PokerPlayer_Random import RandomPokerPlayer
 from Lab1_Agents_Task2_PokerPlayer import PokerPlayer
 from Lab1_Agents_Task2_Card import Card
@@ -58,6 +60,11 @@ class PokerEnvironment:
             self.Biddings["Player2"].append(Player2Bid)
             self.Biddings["Total"] += (Player1Bid + Player2Bid)
 
+        if("Memory" in str(type(self.Player1))):
+                self.Player1.appendOpponentBid(Player2Bid)
+        if("Memory" in str(type(self.Player2))):
+                self.Player2.appendOpponentBid(Player1Bid)
+                
     def showDownPhase(self):
         result = self.evaluateWinner()['outcome']
         if result == 1:
@@ -70,21 +77,19 @@ class PokerEnvironment:
             self.Wins["Player2"]["Times"]  += 1
         else:
             print("It's a draw" )
-        
 
     def start(self):
-        for x in range(50):
 
+        for x in range(50):
             self.cardDealingPhase()
             self.biddingPhase()
             self.showDownPhase()
-
+            print(self.Biddings)
         print (self.Wins)
+        
+        
 
-player1 = RandomPokerPlayer(1)
-player2 = RandomPokerPlayer(2)
-environment = PokerEnvironment(player1,player2)
-environment.start()
+
 
 
 

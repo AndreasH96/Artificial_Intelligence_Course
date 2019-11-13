@@ -3,8 +3,7 @@ import json
 
 class Hand:
 
-    def __init__(self, playerId):
-        self.HolderId = playerId
+    def __init__(self):
         self.cards = []
         with open ('lab1_code\Task2\cards.json') as json_file:
             self.rankToValueJSON = json.load(json_file)['cards']
