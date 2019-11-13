@@ -59,11 +59,12 @@ class PokerEnvironment:
             self.Biddings["Player1"].append(Player1Bid)
             self.Biddings["Player2"].append(Player2Bid)
             self.Biddings["Total"] += (Player1Bid + Player2Bid)
-
-        if("Memory" in str(type(self.Player1))):
+            if("Memory" in str(type(self.Player1))):
                 self.Player1.appendOpponentBid(Player2Bid)
-        if("Memory" in str(type(self.Player2))):
+            if("Memory" in str(type(self.Player2))):
                 self.Player2.appendOpponentBid(Player1Bid)
+
+       
                 
     def showDownPhase(self):
         result = self.evaluateWinner()['outcome']

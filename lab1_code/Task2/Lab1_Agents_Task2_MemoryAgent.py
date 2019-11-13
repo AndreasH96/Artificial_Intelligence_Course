@@ -18,8 +18,8 @@ class MemoryPokerPlayer(PokerPlayer):
         self.estimatedPreviousOpponentPlays.append({"Bid": opponentBid, "Hand":"unknown"})
         estimatedOpponentHand = self.estimateOpponentHand(opponentBid)
     def estimateOpponentHand(self,opponentBid):
-        estimatedPairing = round(opponentBid / 19,0)
-        esimatedHighestCard = opponentBid % 19
+        estimatedPairing = int(opponentBid / 19)
+        esimatedHighestCard = (opponentBid% 19) + 2
         print("Estimated paring : %s Estimated card : %s" % ( estimatedPairing, esimatedHighestCard))
         return ((estimatedPairing,esimatedHighestCard))
     def appendOpponentBidAndHand(self,opponentBid,opponentHand):
