@@ -57,6 +57,7 @@ def readFrontSensors():
         
     return sensors
 
+
 def calcRepulsingForceVector():
     ultraSonicSensors = readFrontSensors()
     robotDirection = World.robotDirection()
