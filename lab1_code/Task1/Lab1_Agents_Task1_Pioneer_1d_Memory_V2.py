@@ -49,6 +49,14 @@ def readLeftAndRightSensorData():
         sensorData["sensorRight"] = 1.1
     return sensorData
 
+def readParallellRightSensors():
+    sensors= []
+    for sensorIndex in range (8,10):
+        ret_s, newSensor = World.vrep.simxGetObjectHandle(0, 'Pioneer_p3dx_ultrasonicSensor%s'%(sensorIndex),World.vrep.simx_opmode_oneshot_wait)
+        sensors.append(dict(index= sensorIndex, distance= getObstacleDist(newSensor)))
+        
+    return sensors
+
 def readFrontSensors():
     sensors = []
     for sensorIndex in range(1,9):
@@ -143,7 +151,6 @@ while robot: # main Control loop
     
     alignRobotToDirection(targetDirection)
     
-    #print(leftAndRightSensorData)
     World.setMotorSpeeds(dict(speedLeft= leftAndRightSensorData["sensorLeft"] * 2 , speedRight=leftAndRightSensorData["sensorRight"] * 2 ) )#
     reverseOfPreviousActions.append(dict(motorspeed=dict(speedLeft= leftAndRightSensorData["sensorLeft"] * 2 , speedRight=leftAndRightSensorData["sensorRight"] * 2 ),simulationTime=10,clockSpeed=-1))
 
@@ -161,14 +168,3 @@ while robot: # main Control loop
     #   alignRobotToDirection(energyblock[3] +(World.math.pi/2))
     
     
-
-
-        
-    ########################################
-    # Action Phase: Assign speed to wheels #
-    ########################################
-    # assign speed to the wheels
-    #World.setMotorSpeeds(motorSpeed)
-    # try to collect energy block (will fail if not within range)
-    #if simulationTime%10000==0:
-    #     print ("Trying to collect a block...",World.collectNearestBlock())

@@ -5,7 +5,7 @@ class Hand:
 
     def __init__(self):
         self.cards = []
-        with open ('lab1_code\Task2\cards.json') as json_file:
+        with open ('Task2\cards.json') as json_file:
             self.rankToValueJSON = json.load(json_file)['cards']
 
     def updateHand(self, newHand):
@@ -30,7 +30,7 @@ class Hand:
 
         return cardPairings
 
-
+    
     # Print out the result
     def countSameRank(self, cardRank):
         counter = 0

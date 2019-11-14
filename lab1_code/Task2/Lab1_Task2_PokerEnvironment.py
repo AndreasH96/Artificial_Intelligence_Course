@@ -6,8 +6,12 @@ from itertools import product
 from Lab1_Agents_Task2_MemoryAgent import MemoryPokerPlayer
 from Lab1_Agents_Task2_PokerPlayer_Reflex import ReflexPokerPlayer
 from Lab1_Agents_Task2_PokerPlayer_Random import RandomPokerPlayer
+from Lab1_Agents_Task2_PokerPlayer_Fixed import FixedPokerPlayer
+from Lab1_Agents_Task2_CorrelationGenerationReflexAgent import CorrelationReflexPokerPlayer
 from Lab1_Agents_Task2_PokerPlayer import PokerPlayer
 from Lab1_Agents_Task2_Card import Card
+from numpy import corrcoef
+from numpy import array
 # identify if there is one or more pairs in the hand
 
 # Rank: {2, 3, 4, 5, 6, 7, 8, 9, T, J, Q, K, A}
@@ -16,9 +20,12 @@ class PokerEnvironment:
     def __init__(self, player1, player2):
         self.Player1 = player1
         self.Player2 = player2
-        with open ('lab1_code\Task2\cards.json') as json_file:
+        with open ('Task2\cards.json') as json_file:
             self.rankToValueJSON = json.load(json_file)['cards']
         self.Wins = {"Player1": {"Times": 0, "Amount": 0 }, "Player2": {"Times": 0, "Amount": 0 }}
+        self.handValueCheckAgent = CorrelationReflexPokerPlayer()
+        self.totalbids1 = []
+        self.totalbids2 = []
     def generateDeck(self):
         possibleRanks = ['2', '3', '4', '5', '6', '7', '8', '9', 'T', 'J', 'Q', 'K', 'A']
         possibleSuits = ['s', 'h', 'd', 'c']
@@ -53,9 +60,12 @@ class PokerEnvironment:
 
     def biddingPhase(self):
         self.Biddings = {"Player1" : [], "Player2" : [], "Total": 0}
+        player1BidErrorSum = 0
+        player2BidErrorSum = 0
         for x in range(3):
             Player1Bid = self.Player1.calculateBid()
             Player2Bid = self.Player2.calculateBid()
+            self.totalbids1.append(Player1Bid)
             self.Biddings["Player1"].append(Player1Bid)
             self.Biddings["Player2"].append(Player2Bid)
             self.Biddings["Total"] += (Player1Bid + Player2Bid)
@@ -63,9 +73,14 @@ class PokerEnvironment:
                 self.Player1.appendOpponentBid(Player2Bid)
             if("Memory" in str(type(self.Player2))):
                 self.Player2.appendOpponentBid(Player1Bid)
+            player1BidErrorSum +=abs(self.handValueCheckAgent.calculateBid(self.Player2.cardHand) - Player1Bid )
+            player2BidErrorSum += abs(self.handValueCheckAgent.calculateBid(self.Player2.cardHand) - Player2Bid)
 
-       
-                
+        if("Memory" in str(type(self.Player1))):
+            self.Player1.appendOpponentBidsError(player2BidErrorSum )
+        if("Memory" in str(type(self.Player2))):
+            self.Player2.appendOpponentBidsError(player1BidErrorSum)
+        
     def showDownPhase(self):
         result = self.evaluateWinner()['outcome']
         if result == 1:
@@ -78,6 +93,37 @@ class PokerEnvironment:
             self.Wins["Player2"]["Times"]  += 1
         else:
             print("It's a draw" )
+        
+
+
+
+    def generateCorrelationComparisonPlays(self):
+            randomPlayer = RandomPokerPlayer()
+            fixedPlayer = FixedPokerPlayer()
+            reflexPlayer = ReflexPokerPlayer()
+            players = [randomPlayer,fixedPlayer,reflexPlayer]
+            datastore = {"RandomPokerPlayer": [], "FixedPokerPlayer":[], "ReflexPokerPlayer":[]}
+            for x in range(50):
+                deck = self.generateDeck()
+                for playerIndex in range(3):
+                    players[playerIndex].assignCards(deck[0:3])
+                #playerBiddings = []
+                
+                for player in players:
+                    deltaHandValueSum = 0
+                    for x in range(3):
+                        #playerBiddings.append(player.calculateBid())
+                        deltaHandValueSum += abs(self.handValueCheckAgent.calculateBid(player.cardHand) - player.calculateBid())
+                    if("Reflex" in str(type(player))):
+                                datastore["ReflexPokerPlayer"].append(deltaHandValueSum / 3)
+                    elif("Fixed" in str(type(player))):
+                        datastore["FixedPokerPlayer"].append(deltaHandValueSum / 3)
+                        #self.totalbids2.append()
+                    elif("Random" in str(type(player))):
+                        datastore["RandomPokerPlayer"].append(deltaHandValueSum/ 3 )   
+                    #playerBiddings=[]
+            with open("Task2\correlationComparison.json", 'w') as jsonFile:
+                json.dump(datastore,jsonFile)
 
     def start(self):
 
@@ -87,6 +133,10 @@ class PokerEnvironment:
             self.showDownPhase()
             print(self.Biddings)
         print (self.Wins)
+
+
+        
+        
         
         
 

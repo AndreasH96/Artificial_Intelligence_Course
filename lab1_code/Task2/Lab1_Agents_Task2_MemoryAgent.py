@@ -1,19 +1,32 @@
 __author__ = 'fyt'
 import math
+from numpy import corrcoef
+from numpy import array
 import random
+import operator
+import matplotlib.pyplot as plt
+import json
 from Lab1_Agents_Task2_PokerPlayer import PokerPlayer
+from Lab1_Agents_Task2_CorrelationGenerationReflexAgent import CorrelationReflexPokerPlayer
 class MemoryPokerPlayer(PokerPlayer):
 
     def __init__(self):
         super().__init__()
         self.truePreviousOpponentPlays = []
         self.estimatedPreviousOpponentPlays= []
+        self.handValueCheckAgent = CorrelationReflexPokerPlayer()
+        self.errorOfPreviosOpponentHands = []
+        with open ('Task2\correlationComparison.json') as json_file:
+            self.corralationComparison = json.load(json_file)
+            print(self.corralationComparison)
 
     def calculateBid(self):
         handAnalysis = self.cardHand.identifyHand()
         amount = (handAnalysis["cards"][0][2] - 1)*19 + self.rankToValueJSON[handAnalysis["cards"][0][0]]-2
         return amount
-
+    def appendOpponentBidsError(self, bidError):
+        self.errorOfPreviosOpponentHands.append(bidError)
+        print(bidError)
     def appendOpponentBid(self,opponentBid):
         self.estimatedPreviousOpponentPlays.append({"Bid": opponentBid, "Hand":"unknown"})
         estimatedOpponentHand = self.estimateOpponentHand(opponentBid)
@@ -22,7 +35,25 @@ class MemoryPokerPlayer(PokerPlayer):
         esimatedHighestCard = (opponentBid% 19) + 2
         print("Estimated paring : %s Estimated card : %s" % ( estimatedPairing, esimatedHighestCard))
         return ((estimatedPairing,esimatedHighestCard))
-    def appendOpponentBidAndHand(self,opponentBid,opponentHand):
-        self.truePreviousOpponentPlays.append({"Bid": opponentBid, "Hand":opponentHand})
+    def appendOpponentBidsAndHand(self,opponentBids,opponentHand):
+        self.truePreviousOpponentPlays.append({"Bids": opponentBids, "Hand":opponentHand})
+        self.errorOfPreviosOpponentHands.append(self.handValueCheckAgent.calculateBid(opponentHand) - opponentBids)
     def evaluateOpponent(self):
-        pass
+        print("ERROR OF CURRENT %s" %(array(self.errorOfPreviosOpponentHands)))
+        print ("ERROR OF JSON %s" %(array(self.corralationComparison["FixedPokerPlayer"])))
+        correlations = {"Random": corrcoef(array(self.corralationComparison["RandomPokerPlayer"]),array(self.errorOfPreviosOpponentHands)), "Fixed": corrcoef(array(self.corralationComparison["FixedPokerPlayer"]),array(self.errorOfPreviosOpponentHands)),
+        "Reflex":  corrcoef(array(self.corralationComparison["ReflexPokerPlayer"]),array(self.errorOfPreviosOpponentHands))}
+        correlations["Random"] = (correlations["Random"])[0,1]
+        correlations["Fixed"] = (correlations["Fixed"])[0,1]
+        correlations["Reflex"] = (correlations["Reflex"])[0,1]
+
+        print ("Corralation: Random: %s  "%  (correlations["Random"]))
+        print ("Corralation: Fixed: %s  "%  (correlations["Fixed"]))
+        print ("Corralation: Reflex: %s  "%  (correlations["Reflex"]))
+        
+       
+        max_value=max(correlations.values())
+        max_keys = [k for k, v in correlations.items() if v == max_value]
+        print(max_keys ,max_value )
+        
+    
