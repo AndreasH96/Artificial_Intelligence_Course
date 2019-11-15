@@ -65,7 +65,6 @@ def readFrontSensors():
         
     return sensors
 
-
 def calcRepulsingForceVector():
     ultraSonicSensors = readFrontSensors()
     robotDirection = World.robotDirection()
@@ -135,6 +134,11 @@ while robot: # main Control loop
 
     # Check if driving straight into a wall
     #currentSensorData=readSensorData()
+
+    
+
+
+
     leftAndRightSensorData = readLeftAndRightSensorData()
     if (leftAndRightSensorData["sensorLeft"]) < 0.2 and  (leftAndRightSensorData["sensorRight"]  < 0.2) :
             timeStuck +=  1
@@ -144,12 +148,7 @@ while robot: # main Control loop
     if timeSinceLastPickup > 500000:
         returnToPreviousState()
         timeSinceLastPickUp = 0
-
-    retractingForceVec = calcRepulsingForceVector()
-    attractingForceVec = calcAttractingForceVector()   
-    targetDirection = calcDirectionToMove(retractingForceVec, attractingForceVec)
     
-    alignRobotToDirection(targetDirection)
     
     World.setMotorSpeeds(dict(speedLeft= leftAndRightSensorData["sensorLeft"] * 2 , speedRight=leftAndRightSensorData["sensorRight"] * 2 ) )#
     reverseOfPreviousActions.append(dict(motorspeed=dict(speedLeft= leftAndRightSensorData["sensorLeft"] * 2 , speedRight=leftAndRightSensorData["sensorRight"] * 2 ),simulationTime=10,clockSpeed=-1))

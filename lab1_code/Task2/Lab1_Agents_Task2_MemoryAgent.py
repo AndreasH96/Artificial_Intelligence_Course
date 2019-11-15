@@ -16,7 +16,7 @@ class MemoryPokerPlayer(PokerPlayer):
         self.estimatedPreviousOpponentPlays= []
         self.handValueCheckAgent = CorrelationReflexPokerPlayer()
         self.errorOfPreviosOpponentHands = []
-        with open ('Task2\correlationComparison.json') as json_file:
+        with open ('lab1_code\Task2\correlationComparison.json') as json_file:
             self.corralationComparison = json.load(json_file)
             print(self.corralationComparison)
 
@@ -39,8 +39,8 @@ class MemoryPokerPlayer(PokerPlayer):
         self.truePreviousOpponentPlays.append({"Bids": opponentBids, "Hand":opponentHand})
         self.errorOfPreviosOpponentHands.append(self.handValueCheckAgent.calculateBid(opponentHand) - opponentBids)
     def evaluateOpponent(self):
-        print("ERROR OF CURRENT %s" %(array(self.errorOfPreviosOpponentHands)))
-        print ("ERROR OF JSON %s" %(array(self.corralationComparison["FixedPokerPlayer"])))
+        #print("ERROR OF CURRENT %s" %(array(self.errorOfPreviosOpponentHands)))
+        #print ("ERROR OF JSON %s" %(array(self.corralationComparison["FixedPokerPlayer"])))
         correlations = {"Random": corrcoef(array(self.corralationComparison["RandomPokerPlayer"]),array(self.errorOfPreviosOpponentHands)), "Fixed": corrcoef(array(self.corralationComparison["FixedPokerPlayer"]),array(self.errorOfPreviosOpponentHands)),
         "Reflex":  corrcoef(array(self.corralationComparison["ReflexPokerPlayer"]),array(self.errorOfPreviosOpponentHands))}
         correlations["Random"] = (correlations["Random"])[0,1]

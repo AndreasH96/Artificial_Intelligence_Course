@@ -5,7 +5,7 @@ class Hand:
 
     def __init__(self):
         self.cards = []
-        with open ('Task2\cards.json') as json_file:
+        with open ('lab1_code\Task2\cards.json') as json_file:
             self.rankToValueJSON = json.load(json_file)['cards']
 
     def updateHand(self, newHand):
@@ -14,7 +14,7 @@ class Hand:
     def identifyHand(self):
         #---Evaluate if 3 of a kind ---
         Hand_ = self.cards
-        cardPairings = {"Category":'unknown', "cards":list(set([(card.rank,card.suit, self.countSameRank(card.rank)) for card in Hand_]))}
+        cardPairings = {"Category":'unknown',"Value": 0, "cards":list(set([(card.rank,card.suit, self.countSameRank(card.rank)) for card in Hand_]))}
 
         # Sort cards according to their rank, by using loopup table
         cardPairings["cards"].sort(key=lambda card:self.rankToValueJSON[card[0]], reverse= True)
@@ -27,7 +27,8 @@ class Hand:
             cardPairings["Category"] = "Pair"
         else:
             cardPairings["Category"] = "One of a kind"
-
+    
+        cardPairings["Value"] = pow(10, cardPairings["cards"][0][2]) * self.rankToValueJSON(cardPairings["cards"][0][0])
         return cardPairings
 
     

@@ -8,3 +8,4 @@ if __name__ == "__main__":
     environment.generateCorrelationComparisonPlays()
     environment.start()
     player2.evaluateOpponent()
+    

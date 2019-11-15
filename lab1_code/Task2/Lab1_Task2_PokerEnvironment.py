@@ -20,7 +20,7 @@ class PokerEnvironment:
     def __init__(self, player1, player2):
         self.Player1 = player1
         self.Player2 = player2
-        with open ('Task2\cards.json') as json_file:
+        with open ('lab1_code\Task2\cards.json') as json_file:
             self.rankToValueJSON = json.load(json_file)['cards']
         self.Wins = {"Player1": {"Times": 0, "Amount": 0 }, "Player2": {"Times": 0, "Amount": 0 }}
         self.handValueCheckAgent = CorrelationReflexPokerPlayer()
@@ -37,6 +37,7 @@ class PokerEnvironment:
         player1Wins = {"outcome":1}
         player2Wins = {"outcome":2}
         draw = {"outcome":0}
+        
         player1Hand = self.Player1.cardHand.identifyHand()
         player2Hand = self.Player2.cardHand.identifyHand()
         print("Player1 %s" % player1Hand)
@@ -77,9 +78,9 @@ class PokerEnvironment:
             player2BidErrorSum += abs(self.handValueCheckAgent.calculateBid(self.Player2.cardHand) - Player2Bid)
 
         if("Memory" in str(type(self.Player1))):
-            self.Player1.appendOpponentBidsError(player2BidErrorSum )
+            self.Player1.appendOpponentBidsError(player2BidErrorSum /3)
         if("Memory" in str(type(self.Player2))):
-            self.Player2.appendOpponentBidsError(player1BidErrorSum)
+            self.Player2.appendOpponentBidsError(player1BidErrorSum / 3)
         
     def showDownPhase(self):
         result = self.evaluateWinner()['outcome']
@@ -103,7 +104,7 @@ class PokerEnvironment:
             reflexPlayer = ReflexPokerPlayer()
             players = [randomPlayer,fixedPlayer,reflexPlayer]
             datastore = {"RandomPokerPlayer": [], "FixedPokerPlayer":[], "ReflexPokerPlayer":[]}
-            for x in range(50):
+            for x in range(1000):
                 deck = self.generateDeck()
                 for playerIndex in range(3):
                     players[playerIndex].assignCards(deck[0:3])
@@ -122,12 +123,12 @@ class PokerEnvironment:
                     elif("Random" in str(type(player))):
                         datastore["RandomPokerPlayer"].append(deltaHandValueSum/ 3 )   
                     #playerBiddings=[]
-            with open("Task2\correlationComparison.json", 'w') as jsonFile:
+            with open("lab1_code\Task2\correlationComparison.json", 'w') as jsonFile:
                 json.dump(datastore,jsonFile)
 
     def start(self):
 
-        for x in range(50):
+        for x in range(1000):
             self.cardDealingPhase()
             self.biddingPhase()
             self.showDownPhase()
@@ -136,10 +137,6 @@ class PokerEnvironment:
 
 
         
-        
-        
-        
-
 
 
 

@@ -7,8 +7,9 @@ import json
 class PokerPlayer:
     def __init__(self):
         self.cardHand = Hand()
-        with open ('Task2\cards.json') as json_file:
+        with open ('lab1_code\Task2\cards.json') as json_file:
             self.rankToValueJSON = json.load(json_file)['cards']
+            
     def assignCards(self,newHand):
         self.cardHand.updateHand(newHand)
    
