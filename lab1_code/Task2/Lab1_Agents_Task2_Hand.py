@@ -27,8 +27,15 @@ class Hand:
             cardPairings["Category"] = "Pair"
         else:
             cardPairings["Category"] = "One of a kind"
-    
-        cardPairings["Value"] = pow(10, cardPairings["cards"][0][2]) * self.rankToValueJSON(cardPairings["cards"][0][0])
+        print(cardPairings["cards"][0][2])
+        print(cardPairings["cards"][0][0])
+        pairing= cardPairings["cards"][0][2] 
+        print(type(pairing))
+        rank = cardPairings["cards"][0][0]
+        #rank = self.rankToValueJSON(cardPairings["cards"][0][0])
+        print(rank)
+        print(self.rankToValueJSON(str(rank)))
+        cardPairings["Value"] = pow(10, pairing) * self.rankToValueJSON(rank)
         return cardPairings
 
     

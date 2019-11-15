@@ -16,9 +16,12 @@ class MemoryPokerPlayer(PokerPlayer):
         self.estimatedPreviousOpponentPlays= []
         self.handValueCheckAgent = CorrelationReflexPokerPlayer()
         self.errorOfPreviosOpponentHands = []
-        with open ('lab1_code\Task2\correlationComparison.json') as json_file:
-            self.corralationComparison = json.load(json_file)
-            print(self.corralationComparison)
+        try:
+            with open ('lab1_code\Task2\correlationComparison.json') as json_file:
+                self.corralationComparison = json.load(json_file)
+        except:
+            with open ('lab1_code\Task2\correlationComparison.json') as json_file:
+                self.corralationComparison = json.load(json_file)
 
     def calculateBid(self):
         handAnalysis = self.cardHand.identifyHand()
