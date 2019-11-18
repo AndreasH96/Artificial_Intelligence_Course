@@ -78,19 +78,19 @@ def followWall():
         parallelRightSensors = readParallellRightSensors()
         print("Parallell Sensors: %s" % parallelRightSensors)
         print("FrontSensors : %s" % leftAndRightSensorData)
-        differenceBetweenSensors = parallelRightSensors[0]["distance"] - parallelRightSensors[1]["distance"]
+        differenceBetweenParallelSensors = parallelRightSensors[0]["distance"] - parallelRightSensors[1]["distance"]
         # Check if robot should try to go for new block or if robot can pick up plock.
-        if (distanceToNearestEnergyBlock +0.3 < comparisonDistanceToNearestEnergyBlock) or (distanceToNearestEnergyBlock < 0.5):
+        if (distanceToNearestEnergyBlock + 0.3 < comparisonDistanceToNearestEnergyBlock) or (distanceToNearestEnergyBlock < 0.5):
             stopFollowWall = True
             break
 
         # Align so follow wall by using sensor 8 and 9, parallell sensors on the right of the robot
-        if ((round(differenceBetweenSensors,2) < 0) or  (parallelRightSensors[0]["distance"] >  0.6 and parallelRightSensors[1]["distance"] > 0.6) and leftAndRightSensorData["sensorLeft"] > 0.4) :
+        if ((round(differenceBetweenParallelSensors,2) < 0) or  (parallelRightSensors[0]["distance"] >  0.6 and parallelRightSensors[1]["distance"] > 0.6) and leftAndRightSensorData["sensorLeft"] > 0.4) :
             
-            World.setMotorSpeeds(dict(speedLeft= 0 , speedRight=  0.1 + (abs(differenceBetweenSensors) ) ) )
-        elif round(differenceBetweenSensors,2 ) > 0 and leftAndRightSensorData["sensorLeft"] > 0.4 :
+            World.setMotorSpeeds(dict(speedLeft= 0 , speedRight=  0.1 + (abs(differenceBetweenParallelSensors) ) ) )
+        elif round(differenceBetweenParallelSensors,2 ) > 0 and leftAndRightSensorData["sensorLeft"] > 0.4 :
             
-            World.setMotorSpeeds(dict(speedLeft = 1 +  (differenceBetweenSensors * 2 ), speedRight=0  ) )
+            World.setMotorSpeeds(dict(speedLeft = 1 +  (differenceBetweenParallelSensors * 2 ), speedRight=0  ) )
         else:
             World.setMotorSpeeds(dict(speedLeft= 1 - (1.1-leftAndRightSensorData["sensorLeft"]) * 2   , speedRight=  1 + (1.1-leftAndRightSensorData["sensorLeft"]) * 2 ) )
         

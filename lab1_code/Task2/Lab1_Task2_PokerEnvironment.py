@@ -61,8 +61,10 @@ class PokerEnvironment:
 
     def biddingPhase(self):
         self.Biddings = {"Player1" : [], "Player2" : [], "Total": 0}
-        player1BidErrorSum = 0
-        player2BidErrorSum = 0
+        player1BidSum = 0
+        player1ValueSum = 0 
+        player2BidSum = 0
+        player2ValueSum = 0
         for x in range(3):
             Player1Bid = self.Player1.calculateBid()
             Player2Bid = self.Player2.calculateBid()
@@ -74,13 +76,15 @@ class PokerEnvironment:
                 self.Player1.appendOpponentBid(Player2Bid)
             if("Memory" in str(type(self.Player2))):
                 self.Player2.appendOpponentBid(Player1Bid)
-            player1BidErrorSum +=abs(self.handValueCheckAgent.calculateBid(self.Player2.cardHand) - Player1Bid )
-            player2BidErrorSum += abs(self.handValueCheckAgent.calculateBid(self.Player2.cardHand) - Player2Bid)
+            player1BidSum += Player1Bid 
+            player1ValueSum += self.Player1.cardHand.identifyHand()["Value"]
+            player2BidSum += Player2Bid
+            player2ValueSum += self.Player2.cardHand.identifyHand()["Value"]
 
         if("Memory" in str(type(self.Player1))):
-            self.Player1.appendOpponentBidsError(player2BidErrorSum /3)
+            self.Player1.appendOpponentBidsError(player2ValueSum / player2BidSum)
         if("Memory" in str(type(self.Player2))):
-            self.Player2.appendOpponentBidsError(player1BidErrorSum / 3)
+            self.Player2.appendOpponentBidsError(player1ValueSum / player1BidSum)
         
     def showDownPhase(self):
         result = self.evaluateWinner()['outcome']
@@ -111,17 +115,22 @@ class PokerEnvironment:
                 #playerBiddings = []
                 
                 for player in players:
-                    deltaHandValueSum = 0
+                    bettingSum = 0
+                    handValueSum = 0
                     for x in range(3):
                         #playerBiddings.append(player.calculateBid())
-                        deltaHandValueSum += abs(self.handValueCheckAgent.calculateBid(player.cardHand) - player.calculateBid())
+                        bettingSum +=  player.calculateBid()
+                        handValueSum += player.cardHand.identifyHand()["Value"]
                     if("Reflex" in str(type(player))):
-                                datastore["ReflexPokerPlayer"].append(deltaHandValueSum / 3)
+                        datastore["ReflexPokerPlayer"].append(handValueSum/bettingSum)
+                        #datastore["ReflexPokerPlayer"].append(bettingSum /3)
                     elif("Fixed" in str(type(player))):
-                        datastore["FixedPokerPlayer"].append(deltaHandValueSum / 3)
+                        datastore["FixedPokerPlayer"].append(handValueSum/bettingSum)
+                        #datastore["FixedPokerPlayer"].append(bettingSum /3)
                         #self.totalbids2.append()
                     elif("Random" in str(type(player))):
-                        datastore["RandomPokerPlayer"].append(deltaHandValueSum/ 3 )   
+                        datastore["RandomPokerPlayer"].append(handValueSum/bettingSum)   
+                        #datastore["RandomPokerPlayer"].append(bettingSum /3)
                     #playerBiddings=[]
             with open("lab1_code\Task2\correlationComparison.json", 'w') as jsonFile:
                 json.dump(datastore,jsonFile)

@@ -34,8 +34,9 @@ class Hand:
         rank = cardPairings["cards"][0][0]
         #rank = self.rankToValueJSON(cardPairings["cards"][0][0])
         print(rank)
-        print(self.rankToValueJSON(str(rank)))
-        cardPairings["Value"] = pow(10, pairing) * self.rankToValueJSON(rank)
+        print(type(rank))
+        print(self.rankToValueJSON[rank])
+        cardPairings["Value"] = pow(10, pairing) * self.rankToValueJSON[rank]
         return cardPairings
 
     
