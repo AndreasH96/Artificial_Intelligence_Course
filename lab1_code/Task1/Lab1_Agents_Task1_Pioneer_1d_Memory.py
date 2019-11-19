@@ -128,6 +128,7 @@ while robot: # main Control loop
         motorSpeed = dict(speedLeft=0, speedRight=0)
         pickup = World.collectNearestBlock()
         if pickup == 'Energy collected :)':
+            pickup = ""
             amountOfBlocksLeft -= 1
             print("Amount of blocks left: %s"% amountOfBlocksLeft)
             if(amountOfBlocksLeft < 1):
