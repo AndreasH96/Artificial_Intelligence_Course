@@ -71,7 +71,8 @@ def followWall():
     timeOutCounter = 0
     while not stopFollowWall:
         timeOutCounter += 1 
-        if timeOutCounter > 50000:
+        print(timeOutCounter)
+        if timeOutCounter > 5000:
             break
         distanceToNearestEnergyBlock = World.getSensorReading("energySensor").distance
         leftAndRightSensorData = readLeftAndRightSensorData()
@@ -83,9 +84,8 @@ def followWall():
         if (distanceToNearestEnergyBlock + 0.3 < comparisonDistanceToNearestEnergyBlock) or (distanceToNearestEnergyBlock < 0.5):
             stopFollowWall = True
             break
-
         # Align so follow wall by using sensor 8 and 9, parallell sensors on the right of the robot
-        if ((round(differenceBetweenParallelSensors,2) < 0) or  (parallelRightSensors[0]["distance"] >  0.6 and parallelRightSensors[1]["distance"] > 0.6) and leftAndRightSensorData["sensorLeft"] > 0.4) :
+        if ((round(differenceBetweenParallelSensors,2) < 0) or  (parallelRightSensors[0]["distance"] >  0.6 and parallelRightSensors[1]["distance"] > 0.6 and leftAndRightSensorData["sensorLeft"] > 0.4)) :
             
             World.setMotorSpeeds(dict(speedLeft= 0 , speedRight=  0.1 + (abs(differenceBetweenParallelSensors) ) ) )
         elif round(differenceBetweenParallelSensors,2 ) > 0 and leftAndRightSensorData["sensorLeft"] > 0.4 :
@@ -102,17 +102,10 @@ while robot: # main Control loop
     #######################################################
     # Perception Phase: Get information about environment #
     #######################################################
-    simulationTime = World.getSimulationTime()
-    if simulationTime%1000==0:
-        # print some useful info, but not too often
-        print ('Time:',simulationTime,\
-               'ultraSonicSensorLeft:',World.getSensorReading("ultraSonicSensorLeft"),\
-               "ultraSonicSensorRight:", World.getSensorReading("ultraSonicSensorRight"))
-    
     directionToNearestEnergyBlock = World.getSensorReading("energySensor").direction
     distanceToNearestEnergyBlock = World.getSensorReading("energySensor").distance
     leftAndRightSensorData = readLeftAndRightSensorData()
-    frontSensorsLeftAndRight= readFrontSensors()
+    frontSensorsLeftAndRight = readFrontSensors()
     timeSinceLastPickup += 1
     ##############################################
     # Reasoning: figure out which action to take #

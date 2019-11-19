@@ -7,6 +7,7 @@ class FixedPokerPlayer(PokerPlayer):
     def __init__(self):
         super().__init__()
         self.biddingStepValue = 1
+        self.type = "Fixed"
     def calculateBid(self):
         amount = 10 * self.biddingStepValue
         self.biddingStepValue +=1
