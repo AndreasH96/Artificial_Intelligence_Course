@@ -88,9 +88,16 @@ class PokerEnvironment:
         else:
             print("It's a draw" )
         
+    def clearHistogramJSON(self):
+        with open ('lab1_code/Task2/fixedAndRandomComparison.json' , 'w') as data_file:
+            emptyjsonDacta = {"Player1":[],"Player2":[]}
+            json.dump(emptyjsonDacta,data_file)
 
     def start(self):
-        for x in range(100):
+
+        self.clearHistogramJSON()
+
+        for x in range(200):
             self.Wins = {"Player1": {"Times": 0, "Amount": 0 , "PlayerType": self.Player1.type}, "Player2": {"Times": 0, "Amount": 0 , "PlayerType": self.Player2.type }}
             for y in range(50):
                 self.cardDealingPhase()
@@ -98,6 +105,7 @@ class PokerEnvironment:
                 self.showDownPhase()
             with open ('lab1_code/Task2/fixedAndRandomComparison.json' ) as data_file:
                 jsonData = json.load(data_file)
+                
             with open ('lab1_code/Task2/fixedAndRandomComparison.json' , 'w') as data_file:
 
                 for playerResult in self.Wins.items():
@@ -121,5 +129,5 @@ class PokerEnvironment:
                 plt.title("Blue: Fixed, Orange: Random") 
                 plt.xlabel("Money per win")
                 plt.ylabel("Amount of times")
-                plt.savefig('fixedRandomComparison.png')
+                #plt.savefig('fixedRandomComparison.png')
                 plt.show()

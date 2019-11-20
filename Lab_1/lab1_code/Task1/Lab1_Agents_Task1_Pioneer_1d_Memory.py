@@ -99,6 +99,12 @@ def followWall():
     
 
 while robot: # main Control loop
+
+    # print some useful info, but not too often
+    simulationTime = World.getSimulationTime()
+    print ('Time: %s' % simulationTime)
+
+
     #######################################################
     # Perception Phase: Get information about environment #
     #######################################################
