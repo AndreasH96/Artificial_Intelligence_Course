@@ -25,5 +25,5 @@ class PokerPlayer:
     def calculateBid(self):
         print("No player type specified")
 
-    def getLatestOpponentHand(self, opponentHand):
+    def setLatestOpponentHand(self, opponentHand):
         self.latestOpponentHand = opponentHand

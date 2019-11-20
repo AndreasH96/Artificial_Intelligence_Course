@@ -87,6 +87,9 @@ class PokerEnvironment:
             self.Wins["Player2"]["Times"]  += 1
         else:
             print("It's a draw" )
+            
+        self.Player1.setLatestOpponentHand(self.Player2.cardHand)
+        self.Player2.setLatestOpponentHand(self.Player1.cardHand)
         
     def clearHistogramJSON(self):
         with open ('lab1_code/Task2/fixedAndRandomComparison.json' , 'w') as data_file:
