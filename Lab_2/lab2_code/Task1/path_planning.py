@@ -180,14 +180,14 @@ def plotMap(map2d_, path_, title_ =''):
 ##   -2 - Start point
 ##   -3 - Goal point
 
-#_map_ = generateMap2d([60,60])
-#plt.clf()
-#plt.imshow(_map_)
-
+_map_ = generateMap2d([60,60])
+plt.clf()
+plt.imshow(_map_)
+plt.show()
 # map with rotated H shape obstacle and obstacles randomly distributed
-#map_h_object, info = generateMap2d_obstacle([60,60])
-#plt.clf()
-#plt.imshow(map_h_object)
+map_h_object, info = generateMap2d_obstacle([60,60])
+plt.clf()
+plt.imshow(map_h_object)
 
 
 ## solved_map description
@@ -197,9 +197,9 @@ def plotMap(map2d_, path_, title_ =''):
 ##   -3 - goal point
 ##   positive_number - one of the values described in lab2 description (heuristic cost, travel cost, cell total cost,...)
 
-#example_solved_map = map_h_object
+example_solved_map = map_h_object
 
-#x_corr, y_corr = range(30),  range(30)[::-1]
-#example_solved_path = [x_corr, y_corr]
+x_corr, y_corr = range(30),  range(30)[::-1]
+example_solved_path = [x_corr, y_corr]
 
-#pp.plotMap(example_solved_map,example_solved_path)
+#plotMap(example_solved_map,example_solved_path)
