@@ -1,3 +1,3 @@
 class Node:
-    def __init__(self, coordinates):
-        self.coordinates= {"x":coordinates["x"],"y":coordinates["y"]}
+    def __init__(self, x , y):
+        self.coordinates= {"x":x,"y":y}

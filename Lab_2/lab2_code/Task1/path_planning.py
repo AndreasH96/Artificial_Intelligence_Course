@@ -4,12 +4,67 @@
 import random
 import numpy as np
 import matplotlib.pyplot as plt
-
+from task1a_RandomSearch import RandomSearch
+from pathPlotter import ScatterPlotter
 #sizeOfMap2D = [100, 50]
 percentOfObstacle = 0.9  # 30% - 60%, random
 
-def generateMap2d(size_):
+def scatterPlot(map2d, path, title =" "):
+    import matplotlib.cm as cm
+    plt.interactive(False)
 
+    greennumber = map2d.max()
+    #greennumber = len(np.unique(map2d_))
+    #print(greennumber)
+    colors = cm.winter(np.linspace(0, 1, greennumber))
+
+    colorsMap2d = [[[] for x in range(map2d.shape[1])] for y in range(map2d.shape[0])]
+    # Assign RGB Val for starting point and ending point
+    locStart, locEnd = np.where(map2d == -2), np.where(map2d == -3)
+
+    colorsMap2d[locStart[0][0]][locStart[1][0]] = [.0, .0, .0, 1.0]  # black
+    colorsMap2d[locEnd[0][0]][locEnd[1][0]] = [.0, .0, 1.0, 1.0]  # white
+
+    # Assign RGB Val for obstacle
+    locObstacle = np.where(map2d == -1)
+    for iposObstacle in range(len(locObstacle[0])):
+        colorsMap2d[locObstacle[0][iposObstacle]][locObstacle[1][iposObstacle]] = [1.0, .0, .0, 1.0]
+    # Assign 0
+    locZero = np.where(map2d == 0)
+
+    for iposZero in range(len(locZero[0])):
+        colorsMap2d[locZero[0][iposZero]][locZero[1][iposZero]] = [1.0, 1.0, 1.0, 1.0]
+
+    # Assign Expanded nodes
+    locExpand = np.where(map2d>0)
+
+    for iposExpand in range(len(locExpand[0])):
+        if(iposExpand != 0):
+            colorsMap2d[locExpand[0][iposExpand]][locExpand[1][iposExpand]] = colors[map2d[locExpand[0][iposExpand]][locExpand[1][iposExpand]]-1]
+
+    for irow in range(len(colorsMap2d)):
+        for icol in range(len(colorsMap2d[irow])):
+            if colorsMap2d[irow][icol] == []:
+                colorsMap2d[irow][icol] = [1.0, 0.0, 0.0, 1.0]
+
+    plt.scatter(x = map2d[0], y = map2d[1])
+    plt.title(title)
+    plt.imshow(colorsMap2d, interpolation='nearest')
+    plt.colorbar()
+    plt.plot(path[:][0],path[:][1], color='magenta',linewidth=2.5)
+    plt.ylim(0,map2d.shape[0])
+    plt.xlim(0,map2d.shape[1])
+    plt.draw()
+    #plt.savefig()
+    plt.show()
+
+
+
+
+
+
+def generateMap2d(size_):
+    
     '''Generates a random 2d map with obstacles (small blocks) randomly distributed. 
        You can specify any size of this map but your solution has to be independent of map size
 
@@ -75,10 +130,10 @@ def generateMap2d_obstacle(size_):
     map2d[map2d==-3] = 0
 
     # add special obstacle
-    xtop = [np.random.random_integers(5, 3*size_x//10-2), np.random.random_integers(7*size_x//10+3, size_x-5)]
-    ytop = np.random.random_integers(7*size_y//10 + 3, size_y - 5)
-    xbot = np.random.random_integers(3, 3*size_x//10-5), np.random.random_integers(7*size_x//10+3, size_x-5)
-    ybot = np.random.random_integers(5, size_y//5 - 3)
+    xtop = [np.random.randint(5, 3*size_x//10-2), np.random.randint(7*size_x//10+3, size_x-5)]
+    ytop = np.random.randint(7*size_y//10 + 3, size_y - 5)
+    xbot = np.random.randint(3, 3*size_x//10-5), np.random.randint(7*size_x//10+3, size_x-5)
+    ybot = np.random.randint(5, size_y//5 - 3)
 
 
     map2d[ybot, xbot[0]:xbot[1]+1] = -1
@@ -93,12 +148,12 @@ def generateMap2d_obstacle(size_):
         maxx = maxx+1
 
     map2d[ybot:ytop, minx:maxx] = -1
-    startp = [np.random.random_integers(0, size_x//2 - 4), np.random.random_integers(ybot+1, ytop-1)]
+    startp = [np.random.randint(0, size_x//2 - 4), np.random.randint(ybot+1, ytop-1)]
 
-    map2d[startp[1], startp[0]] = -2
-    goalp = [np.random.random_integers(size_x//2 + 4, size_x - 3), np.random.random_integers(ybot+1, ytop-1)]
+    map2d[startp[0], startp[1]] = -2
+    goalp = [np.random.randint(size_x//2 + 4, size_x - 3), np.random.randint(ybot+1, ytop-1)]
 
-    map2d[goalp[1],goalp[0]] = -3
+    map2d[goalp[0],goalp[1]] = -3
     #return map2d, [startp[1], startp[0]], [goalp[1], goalp[0]], [ytop, ybot]
     return map2d, [ytop, ybot, minx]
 
@@ -137,8 +192,8 @@ def plotMap(map2d_, path_, title_ =''):
     # Assign RGB Val for starting point and ending point
     locStart, locEnd = np.where(map2d_ == -2), np.where(map2d_ == -3)
     
-    colorsMap2d[locStart[0][0]][locStart[1][0]] = [.0, .0, .0, 1.0]  # black
-    colorsMap2d[locEnd[0][0]][locEnd[1][0]] = [.0, .0, .0, .0]  # white
+    colorsMap2d[locStart[0][0]][locStart[1][0]] = [.0, 1.0, .0, 1.0]  # black
+    colorsMap2d[locEnd[0][0]][locEnd[1][0]] = [.0, .0, 1.0, 1.0]  # white
 
     # Assign RGB Val for obstacle
     locObstacle = np.where(map2d_ == -1)
@@ -154,7 +209,7 @@ def plotMap(map2d_, path_, title_ =''):
     locExpand = np.where(map2d_>0)
 
     for iposExpand in range(len(locExpand[0])):
-        colorsMap2d[locExpand[0][iposExpand]][locExpand[1][iposExpand]] = colors[map2d_[locExpand[0][iposExpand]][locExpand[1][iposExpand]]-1]
+        colorsMap2d[locExpand[0][iposExpand]][locExpand[1][iposExpand]] = [.0, .0, .0, 1.0]
 
     for irow in range(len(colorsMap2d)):
         for icol in range(len(colorsMap2d[irow])):
@@ -179,15 +234,33 @@ def plotMap(map2d_, path_, title_ =''):
 ##   -1 - Obstacle
 ##   -2 - Start point
 ##   -3 - Goal point
-
+#60
+#[18, 52]
+#[25, 2]
 _map_ = generateMap2d([60,60])
-plt.clf()
-plt.imshow(_map_)
-plt.show()
+print(len(_map_[0]))
+
+startNodeMask = _map_ == -2
+startNode = [np.where(startNodeMask)[1][0],np.where(startNodeMask)[0][0]]
+print(startNode)
+
+goalNodeMask = _map_ == -3
+goalNode = [np.where(goalNodeMask)[1][0],np.where(goalNodeMask)[0][0]]
+print(goalNode)
+
+
+plotter = ScatterPlotter()
+agent = RandomSearch()
+map_,path, cost =agent.search(_map_,startNode,goalNode)
+plotter.plot(map_,path,agent.description)
+plotMap(map_,path,agent.description)
+
+
+
 # map with rotated H shape obstacle and obstacles randomly distributed
-map_h_object, info = generateMap2d_obstacle([60,60])
-plt.clf()
-plt.imshow(map_h_object)
+#map_h_object, info = generateMap2d_obstacle([60,60])
+#plt.clf()
+#plt.imshow(map_h_object)
 
 
 ## solved_map description
@@ -197,9 +270,11 @@ plt.imshow(map_h_object)
 ##   -3 - goal point
 ##   positive_number - one of the values described in lab2 description (heuristic cost, travel cost, cell total cost,...)
 
-example_solved_map = map_h_object
+''' example_solved_map = map_h_object
 
 x_corr, y_corr = range(30),  range(30)[::-1]
 example_solved_path = [x_corr, y_corr]
+print(example_solved_path)
+plotMap(example_solved_map,example_solved_path) '''
 
-#plotMap(example_solved_map,example_solved_path)
+
