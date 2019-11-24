@@ -6,6 +6,10 @@ import numpy as np
 import matplotlib.pyplot as plt
 from task1a_RandomSearch import RandomSearch
 from pathPlotter import ScatterPlotter
+from task1a_BFSSearch import BFSSearch 
+from task1a_DFSSearch import DFSSearch 
+from task1a_AStarSearch import AStar 
+
 #sizeOfMap2D = [100, 50]
 percentOfObstacle = 0.9  # 30% - 60%, random
 
@@ -191,9 +195,8 @@ def plotMap(map2d_, path_, title_ =''):
     colorsMap2d = [[[] for x in range(map2d_.shape[1])] for y in range(map2d_.shape[0])]
     # Assign RGB Val for starting point and ending point
     locStart, locEnd = np.where(map2d_ == -2), np.where(map2d_ == -3)
-    
     colorsMap2d[locStart[0][0]][locStart[1][0]] = [.0, 1.0, .0, 1.0]  # black
-    colorsMap2d[locEnd[0][0]][locEnd[1][0]] = [.0, .0, 1.0, 1.0]  # white
+    colorsMap2d[locEnd[0][0]][locEnd[1][0]] = [.0, 1.0, 1.0, 1.0]  # white
 
     # Assign RGB Val for obstacle
     locObstacle = np.where(map2d_ == -1)
@@ -215,14 +218,14 @@ def plotMap(map2d_, path_, title_ =''):
         for icol in range(len(colorsMap2d[irow])):
             if colorsMap2d[irow][icol] == []:
                 colorsMap2d[irow][icol] = [1.0, 0.0, 0.0, 1.0]
-
+    
     plt.figure()
     plt.title(title_)
     plt.imshow(colorsMap2d, interpolation='nearest')
     plt.colorbar()
     plt.plot(path_[:][0],path_[:][1], color='magenta',linewidth=2.5)
-    plt.ylim(0,map2d_.shape[0])
-    plt.xlim(0,map2d_.shape[1])
+    plt.ylim(0,map2d_.shape[1])
+    plt.xlim(0,map2d_.shape[0])
     plt.draw()
     #plt.savefig()
     plt.show()
@@ -238,23 +241,33 @@ def plotMap(map2d_, path_, title_ =''):
 #[18, 52]
 #[25, 2]
 _map_ = generateMap2d([60,60])
-print(len(_map_[0]))
+#print(len(_map_[0]))
 
-startNodeMask = _map_ == -2
-startNode = [np.where(startNodeMask)[1][0],np.where(startNodeMask)[0][0]]
-print(startNode)
+startNodeMask = np.where(_map_ == -2)
+startNode = [startNodeMask[0][0],startNodeMask[1][0]]
+#print(startNode)
 
-goalNodeMask = _map_ == -3
-goalNode = [np.where(goalNodeMask)[1][0],np.where(goalNodeMask)[0][0]]
-print(goalNode)
+goalNodeMask = np.where(_map_ == -3)
+goalNode = [goalNodeMask[0][0],goalNodeMask[1][0]]
+#print(goalNode)
+  # Assign RGB Val for starting point and ending point
+''' locStart, locEnd = np.where(map2d_ == -2), np.where(map2d_ == -3)
 
+colorsMap2d[locStart[0][0]][locStart[1][0]] = [.0, 1.0, .0, 1.0]  # black
+colorsMap2d[locEnd[0][0]][locEnd[1][0]] = [.0, .0, 1.0, 1.0]  # white
+ '''
 
 plotter = ScatterPlotter()
-agent = RandomSearch()
-map_,path, cost =agent.search(_map_,startNode,goalNode)
-plotter.plot(map_,path,agent.description)
-plotMap(map_,path,agent.description)
-
+DFSagent = AStar()
+emptypath = [[],[]]
+#plotMap(_map_,emptypath,"TEst")
+DFSResults = [map_, path, cost, expanded] = DFSagent.search(_map_,startNode,goalNode)
+#plotter.plot(map_,path,agent.description)
+print("Goal: %s" %goalNode)
+print("Start: %s"%startNode)
+print("Nodes expanded: {}".format(expanded))
+plotMap(map_,path,DFSagent.description)
+print(DFSResults)
 
 
 # map with rotated H shape obstacle and obstacles randomly distributed
