@@ -53,7 +53,6 @@ class RandomAgent:
 
         while not self.nodeQueue.isEmpty():
             currentNode = self.nodeQueue.remove()
-            print(currentNode)
             if currentNode.coordinates == self.goalNode.coordinates:
                 self.goalNode.parent = currentNode
                 self.calculatePath()
@@ -67,7 +66,7 @@ class RandomAgent:
                 self.nodeQueue.add(nextNode)
                 self.amountOfNodesExpanded += 1
 
-        return self.searchMap, self.path,len(self.path[0]), self.amountOfNodesExpanded
+        return {"Map" : self.searchMap, "Path":  self.path,  "PathLenght" : len(self.path[0]), "Expanded" : self.amountOfNodesExpanded} 
 
 
 # Priority Queue 

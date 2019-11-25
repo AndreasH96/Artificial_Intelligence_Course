@@ -239,7 +239,7 @@ def plotMap(map2d_, path_, title_ =''):
 #60
 #[18, 52]
 #[25, 2]
-_map_ = generateMap2d([60,60])
+''' _map_ = generateMap2d([60,60])
 secondMap = copy.copy(_map_)
 startNodeMask = np.where(_map_ == -2)
 startNode = [startNodeMask[0][0],startNodeMask[1][0]]
@@ -256,7 +256,7 @@ results = [returnMap, path, cost , expanded] = agent.search()
 
 print("Nodes expanded: {}".format(expanded))
 print("Pathlength: {}".format(cost))
-plotMap(returnMap,path,agent.description)
+plotMap(returnMap,path,agent.description) '''
 
 
 

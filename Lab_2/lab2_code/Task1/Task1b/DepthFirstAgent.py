@@ -24,15 +24,19 @@ class DepthFirstAgent:
         neighbours= []
         for exponent in range (2):
             addition = pow(-1,exponent)
-            if self.searchMap[currentNodeX + addition][currentNodeY] not in {-1,1}  and currentNodeX + addition not in {-1,60}:
-                    neighbours.append(Node(parent =currentNode,
-                        nodeCoordinates=[currentNodeX + addition, currentNodeY ],
-                        cost = self.calculateCost([currentNodeX + addition, currentNodeY ])))
+            if currentNodeX + addition not in {-1,60}:
+                if self.searchMap[currentNodeX + addition][currentNodeY] not in {-1,1}:
 
-            if self.searchMap[currentNodeX ][currentNodeY + addition] not in {-1,1}  and currentNodeY + addition not in {-1,60}:
-                neighbours.append(Node(parent =currentNode,
-                        nodeCoordinates=[currentNodeX, currentNodeY + addition ],
-                        cost = self.calculateCost([currentNodeX, currentNodeY + addition  ])))
+                        neighbours.append(Node(parent =currentNode,
+                            nodeCoordinates=[currentNodeX + addition, currentNodeY ],
+                            cost = self.calculateCost([currentNodeX + addition, currentNodeY ])))
+
+            if currentNodeY + addition not in {-1,60}:
+                if self.searchMap[currentNodeX ][currentNodeY + addition] not in {-1,1}: 
+
+                    neighbours.append(Node(parent =currentNode,
+                            nodeCoordinates=[currentNodeX, currentNodeY + addition ],
+                            cost = self.calculateCost([currentNodeX, currentNodeY + addition  ])))
         return neighbours
                     
     def calculatePath(self):
@@ -48,7 +52,6 @@ class DepthFirstAgent:
 
         while not self.nodeQueue.isEmpty():
             currentNode = self.nodeQueue.remove()
-            print(currentNode)
             if currentNode.coordinates == self.goalNode.coordinates:
                 self.goalNode.parent = currentNode
                 self.calculatePath()
@@ -61,7 +64,7 @@ class DepthFirstAgent:
 
                 self.nodeQueue.add(nextNode)
                 self.amountOfNodesExpanded += 1
-        return self.searchMap, self.path, len(self.path[0]), self.amountOfNodesExpanded
+        return {"Map" : self.searchMap, "Path":  self.path,  "PathLenght" : len(self.path[0]), "Expanded" : self.amountOfNodesExpanded} 
 
 
 # Priority Queue 

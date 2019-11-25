@@ -3,10 +3,10 @@ import math
 import heapq
 from Node import Node
 
-class BreadthFirstAgent:
+class DepthFirstAgent:
     def __init__(self, searchMap, startPosition, goalPosition):
         self.description = "Breadth First Search Algorithm"
-        self.nodeQueue = NodeStack()
+        self.nodeQueue = NodeQueue()
         self.startNode = Node(parent = 0, nodeCoordinates = startPosition, cost= 0)
         self.goalNode = Node(parent = 0, nodeCoordinates = goalPosition, cost= 0)
         self.searchMap = searchMap
@@ -24,15 +24,19 @@ class BreadthFirstAgent:
         neighbours= []
         for exponent in range (2):
             addition = pow(-1,exponent)
-            if self.searchMap[currentNodeX + addition][currentNodeY] not in {-1,1}  and currentNodeX + addition not in {-1,60}:
-                    neighbours.append(Node(parent =currentNode,
-                        nodeCoordinates=[currentNodeX + addition, currentNodeY ],
-                        cost = self.calculateCost([currentNodeX + addition, currentNodeY ])))
+            if currentNodeX + addition not in {-1,60}:
+                if self.searchMap[currentNodeX + addition][currentNodeY] not in {-1,1}:
 
-            if self.searchMap[currentNodeX ][currentNodeY + addition] not in {-1,1}  and currentNodeY + addition not in {-1,60}:
-                neighbours.append(Node(parent =currentNode,
-                        nodeCoordinates=[currentNodeX, currentNodeY + addition ],
-                        cost = self.calculateCost([currentNodeX, currentNodeY + addition  ])))
+                        neighbours.append(Node(parent =currentNode,
+                            nodeCoordinates=[currentNodeX + addition, currentNodeY ],
+                            cost = self.calculateCost([currentNodeX + addition, currentNodeY ])))
+
+            if currentNodeY + addition not in {-1,60}:
+                if self.searchMap[currentNodeX ][currentNodeY + addition] not in {-1,1}: 
+
+                    neighbours.append(Node(parent =currentNode,
+                            nodeCoordinates=[currentNodeX, currentNodeY + addition ],
+                            cost = self.calculateCost([currentNodeX, currentNodeY + addition  ])))
         return neighbours
                     
     def calculatePath(self):
@@ -48,24 +52,23 @@ class BreadthFirstAgent:
 
         while not self.nodeQueue.isEmpty():
             currentNode = self.nodeQueue.remove()
-            print(currentNode)
             if currentNode.coordinates == self.goalNode.coordinates:
                 self.goalNode.parent = currentNode
                 self.calculatePath()
                 break
-
+            
             for nextNode in self.getNeighbors(currentNode):
 
-                if(self.searchMap[nextNode.coordinates[0]][nextNode.coordinates[1]] == 0):
-                    self.searchMap[nextNode.coordinates[0]][nextNode.coordinates[1]] = 1
+                if(self.searchMap[currentNode.coordinates[0]][currentNode.coordinates[1]] == 0):
+                    self.searchMap[currentNode.coordinates[0]][currentNode.coordinates[1]] = 1
+
                 self.nodeQueue.add(nextNode)
                 self.amountOfNodesExpanded += 1
-
-        return self.searchMap, self.path, len(self.path[0]), self.amountOfNodesExpanded
+        return {"Map" : self.searchMap, "Path":  self.path,  "PathLenght" : len(self.path[0]), "Expanded" : self.amountOfNodesExpanded} 
 
 
 # Priority Queue 
-class NodeStack:
+class NodeQueue:
     def __init__(self):
         self.elements = []
     def isEmpty(self):
@@ -80,6 +83,6 @@ class NodeStack:
         
 
     def remove(self):
-        returnNode = self.elements[0]
+        returnNode = self.elements[len(self.elements) -1]
         self.elements.remove(returnNode)
         return returnNode
