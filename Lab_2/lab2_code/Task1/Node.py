@@ -1,3 +1,5 @@
 class Node:
-    def __init__(self, x , y):
-        self.coordinates= {"x":x,"y":y}
+    def __init__(self, parent, nodeCoordinates, cost):
+        self.parent = parent
+        self.cost = cost
+        self.coordinates= [nodeCoordinates[0],nodeCoordinates[1]]

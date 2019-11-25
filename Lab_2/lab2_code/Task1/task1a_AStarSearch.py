@@ -10,7 +10,7 @@ class AStar:
         self.moving_cost = 1
         self.count = 0
         self.description = "A* Search Algorithm"
-
+        self.nodeIDCounter = 0
     # An example of search algorithm
     # modify it and implment the missing part
     def search(self,map, start, goal):
@@ -35,11 +35,12 @@ class AStar:
                 addition = pow(-1,exponent)
                 if ([currentNodeX + addition , currentNodeY] not in came_from.values()) and currentNodeX + addition not in {-1,60}:
                     if gameMap[currentNodeX + addition][currentNodeY] != (-1.0) and gameMap[currentNodeX + addition][currentNodeY] != 1 :
-                        neighbours.append([currentNodeX + addition, currentNodeY ])
-            
+                        neighbours.append( Node(id = self.nodeIDCounter,nodeCoordinates=[currentNodeX + addition, currentNodeY ]))
+                        self.nodeIDCounter += 1
                 if ([currentNodeX , currentNodeY + addition] not in came_from.values())  and currentNodeY + addition not in {-1,60}:
                     if gameMap[currentNodeX][currentNodeY + addition] != (-1.0) and gameMap[currentNodeX][currentNodeY + addition] != 1:
-                        neighbours.append([currentNodeX, currentNodeY + addition])
+                        neighbours.append(Node(id = self.nodeIDCounter, nodeCoordinates=[currentNodeX, currentNodeY + addition]))
+                        self.nodeIDCounter += 1
             #print("Current pos: x:%s, y%s mapVal: %s"%(currentNodeX,currentNodeY, map[currentNodeX][currentNodeY]))
             return neighbours
         def calcManhattanDistanceToGoal(position):
@@ -48,8 +49,8 @@ class AStar:
         def calcManhattanDistanceFromStart(position):
             distance = abs(start[0] - position[0] ) + abs( start[1] - position[1])
             return distance
-        def cost_function(position):
-            return calcManhattanDistanceToGoal(position) + calcManhattanDistanceFromStart(position)
+        def cost_function(node):
+            return calcManhattanDistanceToGoal(node.coordinates) + calcManhattanDistanceFromStart(node.coordinates)
         
         #def calcPath():
 
@@ -61,29 +62,39 @@ class AStar:
             stepCounter += 1
             # check if the goal is reached
             if current == goal:
-                print(start)
-                print(current)
+                calcPath(current)
+                """ print(start)
+                print(current) """
                 break
-
+            def calcPath(finalNode):
+                for nodeID in came_from.keys():
+                    if came_from[nodeID].coordinates == goal:
+                        currentNode = came_from[nodeID]
+                    if came_from[nodeID].coordinates == start:
+                        startNode = came_from[nodeID]
+                """ print("Current: {}".format(currentNode.coordinates))
+                print("Start: {}".format(startNode.coordinates)) """ 
+                
+                while currentNode.coordinates != startNode.coordinates:
+                    path[0].append(currentNode.coordinates[0])
+                    path[1].append(currentNode.coordinates[1])
+                    currentNode = came_from.get(currentNode.child.id)
+                    #print("START: {} , CURRENT {}".format(startNode.coordinates,currentNode.coordinat))
             # for each neighbour of the current cell
             # Implement get_neighbors function (return nodes to expand next)
             # (make sure you avoid repetitions!)
-            neighborsWithCosts =[]
             for next in get_neighbors(current):
                 # compute cost to reach next cell
                 # Implement cost function
                 cost = cost_function(next)
-                if(gameMap[next[0]][next[1]] == 0):
-                    gameMap[next[0]][next[1]] = 1
-                #print("ADDING %s " % next)
-                #if cost < cost_function(current):
-                frontier.add(next, cost)
+                if(gameMap[next.coordinates[0]][next.coordinates[1]] == 0):
+                    gameMap[next.coordinates[0]][next.coordinates[1]] = 1
+                frontier.add(next.coordinates, cost)
 
                 # add to path
-                came_from[str(next)] = current
+                came_from[next.id] = Node(id = self.nodeIDCounter, child = next, nodeCoordinates= current)
+                self.nodeIDCounter += 1
             
-                #path[1].append(current[0])
-                #path[0].append(current[1])
             ''' counter = counter +1
             
             plotter.plot(gameMap,path,"Title")

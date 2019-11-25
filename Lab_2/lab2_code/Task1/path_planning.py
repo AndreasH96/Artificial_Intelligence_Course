@@ -1,15 +1,13 @@
 """ Functions for generating 2D grid maps, for AI Lab 2 - path planning.
 """
-
+import copy
 import random
 import numpy as np
 import matplotlib.pyplot as plt
-from task1a_RandomSearch import RandomSearch
-from pathPlotter import ScatterPlotter
-from task1a_BFSSearch import BFSSearch 
-from task1a_DFSSearch import DFSSearch 
-from task1a_AStarSearch import AStar 
-
+from AStarAgent import AStarAgent
+from BreadthFirstAgent import BreadthFirstAgent
+from DepthFirstAgent import DepthFirstAgent
+from RandomAgent import RandomAgent
 #sizeOfMap2D = [100, 50]
 percentOfObstacle = 0.9  # 30% - 60%, random
 
@@ -93,9 +91,9 @@ def generateMap2d(size_):
     map2d[map2d <= perObstacles_] = 0
     map2d[map2d > perObstacles_] = -1
 
-    yloc, xloc = [np.random.random_integers(0, size_x-1, 2), np.random.random_integers(0, size_y-1, 2)]
+    yloc, xloc = [np.random.randint(0, size_x-1, 2), np.random.randint(0, size_y-1, 2)]
     while (yloc[0] == yloc[1]) and (xloc[0] == xloc[1]):
-        yloc, xloc = [np.random.random_integers(0, size_x-1,2), np.random.random_integers(0, size_y-1, 2)]
+        yloc, xloc = [np.random.randint(0, size_x-1,2), np.random.randint(0, size_y-1, 2)]
 
     map2d[xloc[0]][yloc[0]] = -2
     map2d[xloc[1]][yloc[1]] = -3
@@ -212,7 +210,8 @@ def plotMap(map2d_, path_, title_ =''):
     locExpand = np.where(map2d_>0)
 
     for iposExpand in range(len(locExpand[0])):
-        colorsMap2d[locExpand[0][iposExpand]][locExpand[1][iposExpand]] = [.0, .0, .0, 1.0]
+        #colorsMap2d[locExpand[0][iposExpand]][locExpand[1][iposExpand]] = [.0, .0, .0, 1.0]
+        colorsMap2d[locExpand[0][iposExpand]][locExpand[1][iposExpand]] = colors[int(map2d_[locExpand[0][iposExpand]][locExpand[1][iposExpand]]-1)]
 
     for irow in range(len(colorsMap2d)):
         for icol in range(len(colorsMap2d[irow])):
@@ -241,33 +240,25 @@ def plotMap(map2d_, path_, title_ =''):
 #[18, 52]
 #[25, 2]
 _map_ = generateMap2d([60,60])
-#print(len(_map_[0]))
-
+secondMap = copy.copy(_map_)
 startNodeMask = np.where(_map_ == -2)
 startNode = [startNodeMask[0][0],startNodeMask[1][0]]
-#print(startNode)
 
 goalNodeMask = np.where(_map_ == -3)
 goalNode = [goalNodeMask[0][0],goalNodeMask[1][0]]
-#print(goalNode)
+
   # Assign RGB Val for starting point and ending point
-''' locStart, locEnd = np.where(map2d_ == -2), np.where(map2d_ == -3)
 
-colorsMap2d[locStart[0][0]][locStart[1][0]] = [.0, 1.0, .0, 1.0]  # black
-colorsMap2d[locEnd[0][0]][locEnd[1][0]] = [.0, .0, 1.0, 1.0]  # white
- '''
-
-plotter = ScatterPlotter()
-DFSagent = AStar()
-emptypath = [[],[]]
-#plotMap(_map_,emptypath,"TEst")
-DFSResults = [map_, path, cost, expanded] = DFSagent.search(_map_,startNode,goalNode)
-#plotter.plot(map_,path,agent.description)
 print("Goal: %s" %goalNode)
 print("Start: %s"%startNode)
+agent = AStarAgent(searchMap = _map_, startPosition = startNode, goalPosition = goalNode)
+results = [returnMap, path, cost , expanded] = agent.search()
+
 print("Nodes expanded: {}".format(expanded))
-plotMap(map_,path,DFSagent.description)
-print(DFSResults)
+print("Pathlength: {}".format(cost))
+plotMap(returnMap,path,agent.description)
+
+
 
 
 # map with rotated H shape obstacle and obstacles randomly distributed
