@@ -9,6 +9,7 @@ from GreedyAgentManhattan import GreedyAgentManhattan
 from path_planning import plotMap, generateMap2d, generateMap2d_obstacle
 from AStarAgentCustom import AStarAgentCustom
 import matplotlib.pyplot as plt
+
 searchMap , info= generateMap2d_obstacle([100,100])
 print(info)
 searchMapCopy = copy(searchMap)
@@ -25,7 +26,7 @@ print("Start: %s"%startNode)
 agent = AStarAgentCustom(searchMap = searchMap, startPosition = startNode, goalPosition = goalNode, boardInfo = info)
 results = agent.search()
 
-euclideanAgent = BreadthFirstAgent(searchMap = searchMapCopy, startPosition = startNode, goalPosition = goalNode)
+euclideanAgent = DepthFirstAgent(searchMap = searchMapCopy, startPosition = startNode, goalPosition = goalNode)
 resultsEuclidean = euclideanAgent.search() 
 
 print("Nodes expanded: Custom: {}   A*: {}  ".format(results["Expanded"], resultsEuclidean["Expanded"]))

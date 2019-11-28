@@ -18,7 +18,7 @@ class SearchAgent:
     def getNextNode(self):
         pass
     def calculateCost(self,newNode):
-        return 1
+        pass
         
     def getNeighbors(self,currentNode):
         neighbors= []
@@ -55,7 +55,7 @@ class SearchAgent:
 
             for nextNode in self.getNeighbors(currentNode):
 
-                if(self.searchMap[nextNode.coordinates[0]][nextNode.coordinates[1]] == 0):
+                if(self.searchMap[nextNode.coordinates[0]][nextNode.coordinates[1]] >= 0):
                     self.searchMap[nextNode.coordinates[0]][nextNode.coordinates[1]] = nextNode.depth
                 self.addNode(nextNode)
                 self.amountOfNodesExpanded += 1

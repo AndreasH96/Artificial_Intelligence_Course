@@ -100,7 +100,7 @@ def poker_strategy_example(opponent_hand,
 
             elif bidding_nr >= 2:
                 if agent_action_value == 25:
-                    opponent_action = 'BEt'
+                    opponent_action = 'BET'
                     opponent_action_value = 25
                 else:
                     opponent_action = 'CALL'
