@@ -30,14 +30,14 @@ class GreedySearchAgent:
         neighbours= []
         for exponent in range (2):
             addition = pow(-1,exponent)
-            if currentNodeX + addition not in {-1, 100}:
+            if currentNodeX + addition not in {-1, 60}:
                 if self.searchMap[currentNodeX + addition][currentNodeY] not in {-1,1}:
 
                         neighbours.append(Node(parent =currentNode,
                             nodeCoordinates=[currentNodeX + addition, currentNodeY ],
                             cost = self.calculateCost([currentNodeX + addition, currentNodeY ])))
 
-            if currentNodeY + addition not in {-1, 100}:
+            if currentNodeY + addition not in {-1, 60}:
                 if self.searchMap[currentNodeX ][currentNodeY + addition] not in {-1,1}: 
 
                     neighbours.append(Node(parent =currentNode,

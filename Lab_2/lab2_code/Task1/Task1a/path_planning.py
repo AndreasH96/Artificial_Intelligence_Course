@@ -4,7 +4,7 @@ import copy
 import random
 import numpy as np
 import matplotlib.pyplot as plt
-from AStarAgent import AStarAgent
+#from AStarAgentM import AStarAgent
 from BreadthFirstAgent import BreadthFirstAgent
 from DepthFirstAgent import DepthFirstAgent
 from RandomAgent import RandomAgent
@@ -210,7 +210,6 @@ def plotMap(map2d_, path_, title_ =''):
     locExpand = np.where(map2d_>0)
 
     for iposExpand in range(len(locExpand[0])):
-        #colorsMap2d[locExpand[0][iposExpand]][locExpand[1][iposExpand]] = [.0, .0, .0, 1.0]
         colorsMap2d[locExpand[0][iposExpand]][locExpand[1][iposExpand]] = colors[int(map2d_[locExpand[0][iposExpand]][locExpand[1][iposExpand]]-1)]
 
     for irow in range(len(colorsMap2d)):

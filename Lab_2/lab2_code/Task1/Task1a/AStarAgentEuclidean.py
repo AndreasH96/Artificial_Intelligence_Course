@@ -30,7 +30,7 @@ class AStarAgentEuclidean:
         neighbours= []
         for exponent in range (2):
             addition = pow(-1,exponent)
-            if currentNodeX + addition not in {-1, 100}:
+            if currentNodeX + addition not in {-1, 60}:
                 if self.searchMap[currentNodeX + addition][currentNodeY] not in {-1,1}:
 
                         newNode = Node (parent = currentNode,
@@ -40,7 +40,7 @@ class AStarAgentEuclidean:
                         newNode.cost = self.calculateCost(newNode)
                         neighbours.append(newNode)
 
-            if currentNodeY + addition not in {-1,100}:
+            if currentNodeY + addition not in {-1,60}:
                 if self.searchMap[currentNodeX ][currentNodeY + addition] not in {-1,1}:
 
                     newNode = Node(parent =currentNode,
