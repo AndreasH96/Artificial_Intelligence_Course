@@ -26,7 +26,7 @@ print("Start: %s"%startNode)
 agent = AStarAgentCustom(searchMap = searchMap, startPosition = startNode, goalPosition = goalNode, boardInfo = info)
 results = agent.search()
 
-euclideanAgent = DepthFirstAgent(searchMap = searchMapCopy, startPosition = startNode, goalPosition = goalNode)
+euclideanAgent = BreadthFirstAgent(searchMap = searchMapCopy, startPosition = startNode, goalPosition = goalNode)
 resultsEuclidean = euclideanAgent.search() 
 
 print("Nodes expanded: Custom: {}   A*: {}  ".format(results["Expanded"], resultsEuclidean["Expanded"]))

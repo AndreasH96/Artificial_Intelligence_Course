@@ -27,9 +27,11 @@ class PokerPlayer(object):
     def get_actions(self):
         actions_ = []
         for _action_ in AGENT_ACTIONS:
+            # if agent cant bet any more money, fold
             if _action_[:3] == 'BET' and int(_action_[3:])>=(self.stack):
                 actions_.append('FOLD')
             else:
+                # else, append the betting or call amount
                 actions_.append(_action_)
         return set(actions_)
 
