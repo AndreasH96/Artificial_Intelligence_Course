@@ -5,12 +5,62 @@ from poker_game_example import PokerPlayer, GameState
 from RandomAgent import RandomAgent
 import copy
 
+MAX_HANDS = 4
+INIT_AGENT_STACK = 400
+
 class PokerGame():
+    
     def __init__(self, agent):
         self.agent = agent
         self.opponent = PokerPlayer(current_hand_=None, stack_=INIT_AGENT_STACK, action_=None, action_value_=None)
+        self.initState = GameState(nn_current_hand_=0,
+                       nn_current_bidding_=0,
+                       phase_ = 'INIT_DEALING',
+                       pot_=0,
+                       acting_agent_=None,
+                       agent_=agent,
+                       opponent_=self.opponent,
+                       )
+        self.game_state_queue = []
+        self.game_on = True
+        self.round_init = True
+        self.end_state_ = None
 
-        pass
+    def start(self):
+        while self.game_on:
+
+            if self.round_init:
+                self.round_init = False
+                states_ = get_next_states(self.initState)
+                self.game_state_queue.extend(states_[:])
+            else:
+                
+                # just an example: only expanding the last return node
+                states_ = get_next_states(states_[-1])
+                #nextState = self.agent.evaluateStates(states_)
+                self.game_state_queue.extend(states_[:])
+
+                for _state_ in states_:
+                    if _state_.phase == 'SHOWDOWN' and (_state_.opponent.stack <= 300 or _state_.agent.stack <= 300): #or _state_.MAX_HANDS >= 4):
+                            self.end_state_ = _state_
+                            self.game_on = False
+
+    def printResultingState(self):
+            
+        state__ = self.end_state_
+        if(state__ != None):
+            nn_level = 0
+
+            print('------------ print game info ---------------')
+            print('nn_states_total', len(self.game_state_queue))
+
+            while state__.parent_state != None:
+                nn_level += 1
+                print(nn_level)
+                state__.print_state_info()
+                state__ = state__.parent_state
+
+            print(nn_level)
     # copy given state in the argument
 def copy_state(game_state):
     _state = copy.copy(game_state)

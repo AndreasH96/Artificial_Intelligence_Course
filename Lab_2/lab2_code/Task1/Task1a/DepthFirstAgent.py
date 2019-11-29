@@ -5,7 +5,7 @@ from Node import Node
 
 class DepthFirstAgent:
     def __init__(self, searchMap, startPosition, goalPosition):
-        self.description = "Breadth First Search Algorithm"
+        self.description = "Depth First Search Algorithm"
         self.nodeQueue = NodeQueue()
         self.startNode = Node(parent = 0, nodeCoordinates = startPosition, cost= 0)
         self.goalNode = Node(parent = 0, nodeCoordinates = goalPosition, cost= 0)
@@ -24,14 +24,14 @@ class DepthFirstAgent:
         neighbours= []
         for exponent in range (2):
             addition = pow(-1,exponent)
-            if currentNodeX + addition not in {-1,60}:
+            if currentNodeX + addition not in {-1,50}:
                 if self.searchMap[currentNodeX + addition][currentNodeY] not in {-1,1}:
 
                         neighbours.append(Node(parent =currentNode,
                             nodeCoordinates=[currentNodeX + addition, currentNodeY ],
                             cost = self.calculateCost([currentNodeX + addition, currentNodeY ])))
 
-            if currentNodeY + addition not in {-1,60}:
+            if currentNodeY + addition not in {-1,50}:
                 if self.searchMap[currentNodeX ][currentNodeY + addition] not in {-1,1}: 
 
                     neighbours.append(Node(parent =currentNode,
