@@ -6,7 +6,7 @@ import copy
 Player class
 """
 class PokerPlayer(object):
-    def __init__(self, current_hand_=None, stack_=300, action_=None, action_value_=None):
+    def __init__(self, current_hand_=None, stack_=400, action_=None, action_value_=None):
         self.current_hand = current_hand_
         self.current_hand_type = []
         self.current_hand_strength = []
@@ -46,7 +46,7 @@ class GameState(object):
                  pot_=None,
                  acting_agent_=None,
                  parent_state_=None,
-                 children_state_=None,
+                 children_state_=[],
                  agent_=None,
                  opponent_=None):
 

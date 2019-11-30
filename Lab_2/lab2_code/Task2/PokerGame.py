@@ -29,7 +29,7 @@ class PokerGame():
         self.amountOfHandsDealed = 0
     
     def shouldEndGame(self,state):
-            if state.phase == 'SHOWDOWN' and ((state.agent.stack - state.opponent.stack) >= 100  ) or self.agent.amountOfNodesExtended == MAX_EXTENDED or self.amountOfHandsDealed == MAX_HANDS >= 4:
+            if state.phase == 'SHOWDOWN' and ((state.agent.stack - state.opponent.stack) >= 100  ) or self.agent.amountOfNodesExtended == MAX_EXTENDED or state.nn_current_hand == MAX_HANDS:
                 return True
             return False
     def start(self):
@@ -44,17 +44,16 @@ class PokerGame():
                 
                 # just an example: only expanding the last return node
                 #states_ = get_next_states(states_[-1])
-                nextState = self.agent.evaluateStates(states_)
-                self.game_state_queue.extend(states_[:])
+                states_ = self.agent.evaluateStates(states_) 
+                self.game_state_queue.extend(states_)
                 self.agent.amountOfNodesExtended +=1 
-                for _state_ in nextState:
+                for _state_ in states_:
                     if self.shouldEndGame(_state_):
                             self.end_state_ = _state_
                             self.game_on = False
                 #--------------------------------------------------------
                             
                             
-
     def printResultingState(self):
             
         state__ = self.end_state_
@@ -63,14 +62,17 @@ class PokerGame():
 
             print('------------ print game info ---------------')
             print('nn_states_total', len(self.game_state_queue))
-
+            printQueue = []
             while state__.parent_state != None:
-                nn_level += 1
-                print(nn_level)
-                state__.print_state_info()
+                printQueue.append(state__)
                 state__ = state__.parent_state
 
-            print(nn_level)
+            printQueue.reverse()
+            for state in printQueue:
+                nn_level += 1
+                print("nn_level: {}".format(nn_level))
+                state.print_state_info()
+            print("Final nn_level: {}".format(nn_level))
     # copy given state in the argument
 def copy_state(game_state):
     _state = copy.copy(game_state)
