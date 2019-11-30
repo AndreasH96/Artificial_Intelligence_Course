@@ -7,6 +7,7 @@ import copy
 
 MAX_HANDS = 4
 INIT_AGENT_STACK = 400
+MAX_EXTENDED = 10000
 
 class PokerGame():
     
@@ -25,7 +26,12 @@ class PokerGame():
         self.game_on = True
         self.round_init = True
         self.end_state_ = None
-
+        self.amountOfHandsDealed = 0
+    
+    def shouldEndGame(self,state):
+            if state.phase == 'SHOWDOWN' and ((state.agent.stack - state.opponent.stack) >= 100  ) or self.agent.amountOfNodesExtended == MAX_EXTENDED or self.amountOfHandsDealed == MAX_HANDS >= 4:
+                return True
+            return False
     def start(self):
         while self.game_on:
 
@@ -34,16 +40,20 @@ class PokerGame():
                 states_ = get_next_states(self.initState)
                 self.game_state_queue.extend(states_[:])
             else:
+                #-------------- CHANGE HERE IF NEEDED ----------------#
                 
                 # just an example: only expanding the last return node
-                states_ = get_next_states(states_[-1])
-                #nextState = self.agent.evaluateStates(states_)
+                #states_ = get_next_states(states_[-1])
+                nextState = self.agent.evaluateStates(states_)
                 self.game_state_queue.extend(states_[:])
-
-                for _state_ in states_:
-                    if _state_.phase == 'SHOWDOWN' and (_state_.opponent.stack <= 300 or _state_.agent.stack <= 300): #or _state_.MAX_HANDS >= 4):
+                self.agent.amountOfNodesExtended +=1 
+                for _state_ in nextState:
+                    if self.shouldEndGame(_state_):
                             self.end_state_ = _state_
                             self.game_on = False
+                #--------------------------------------------------------
+                            
+                            
 
     def printResultingState(self):
             
@@ -86,7 +96,7 @@ def get_next_states(last_state):
 
             if last_state.phase == 'SHOWDOWN' or last_state.phase == 'INIT_DEALING':
                 _state_.dealing_cards()
-
+                
             if _action_ == 'CALL':
 
                 _state_.phase = 'SHOWDOWN'
@@ -196,4 +206,3 @@ def get_next_states(last_state):
             print('unknown_action')
             exit()
         return states
-
