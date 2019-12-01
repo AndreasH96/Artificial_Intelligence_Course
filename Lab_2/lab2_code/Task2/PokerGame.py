@@ -29,7 +29,7 @@ class PokerGame():
         self.amountOfHandsDealed = 0
     
     def shouldEndGame(self,state):
-            if state.phase == 'SHOWDOWN' and ((state.agent.stack - state.opponent.stack) >= 100  ) or self.agent.amountOfNodesExtended == MAX_EXTENDED or state.nn_current_hand == MAX_HANDS:
+            if state.phase == 'SHOWDOWN' and ((state.agent.stack - state.opponent.stack) >= 100  ) or self.agent.amountOfNodesExtended == MAX_EXTENDED :#or state.nn_current_hand == MAX_HANDS:
                 return True
             return False
     def start(self):
@@ -44,9 +44,9 @@ class PokerGame():
                 
                 # just an example: only expanding the last return node
                 #states_ = get_next_states(states_[-1])
-                states_ = self.agent.evaluateStates(states_) 
+                states_ = self.agent.evaluateStates(self.game_state_queue.pop(0)) 
                 self.game_state_queue.extend(states_)
-                self.agent.amountOfNodesExtended +=1 
+                #self.agent.amountOfNodesExtended +=1 
                 for _state_ in states_:
                     if self.shouldEndGame(_state_):
                             self.end_state_ = _state_
@@ -73,6 +73,7 @@ class PokerGame():
                 print("nn_level: {}".format(nn_level))
                 state.print_state_info()
             print("Final nn_level: {}".format(nn_level))
+            #self.amountOfNodesExpanded = nn_level
     # copy given state in the argument
 def copy_state(game_state):
     _state = copy.copy(game_state)

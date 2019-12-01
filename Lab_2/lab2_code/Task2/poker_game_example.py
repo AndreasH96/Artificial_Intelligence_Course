@@ -60,6 +60,7 @@ class GameState(object):
         self.agent = agent_
         self.opponent = opponent_
         self.showdown_info = None
+        self.depth = 0
 
     """
     draw 10 cards randomly from a deck

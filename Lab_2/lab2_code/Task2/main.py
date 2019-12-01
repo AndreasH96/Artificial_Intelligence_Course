@@ -7,15 +7,35 @@ import time
 from RandomAgent import RandomAgent
 from DepthFirstAgent import DepthFirstAgent
 from GreedyAgent import GreedyAgent
+from GreedyAgentImproved import GreedyAgentImproved
 """
 Game flow:
 Two agents will keep playing until one of them lose 100 coins or more.
 """
 INIT_AGENT_STACK = 400
-randomAgent = GreedyAgent(current_hand=None, stack=INIT_AGENT_STACK, action=None, action_value=None)
-#startTime = time.time()
-pokerGame = PokerGame(randomAgent)
+GreedyData=[]
+GreedyImprovedData=[]
+
+Agent = DepthFirstAgent(current_hand=None, stack=INIT_AGENT_STACK, action=None, action_value=None)
+    #startTime = time.time()
+pokerGame = PokerGame(Agent)
 pokerGame.start()
 pokerGame.printResultingState()
-#print("Time required: {}".format(time.time() - startTime))
-print(randomAgent.amountOfNodesExtended)
+print(Agent.amountOfNodesExtended)
+''' for x in range(10):
+
+    Agent = GreedyAgent(current_hand=None, stack=INIT_AGENT_STACK, action=None, action_value=None)
+    #startTime = time.time()
+    pokerGame = PokerGame(Agent)
+    pokerGame.start()
+    pokerGame.printResultingState()
+    GreedyData.append(pokerGame.amountOfNodesExpanded)
+
+    Agent = GreedyAgentImproved(current_hand=None, stack=INIT_AGENT_STACK, action=None, action_value=None)
+    #startTime = time.time()
+    pokerGame = PokerGame(Agent)
+    pokerGame.start()
+    pokerGame.printResultingState()
+    GreedyImprovedData.append(pokerGame.amountOfNodesExpanded)
+    #print("Time required: {}".format(time.time() - startTime))
+print("Greedy: {}\n Improved: {}".format(GreedyData, GreedyImprovedData)) '''

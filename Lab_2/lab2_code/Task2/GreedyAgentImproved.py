@@ -6,12 +6,13 @@ import PokerGame
 import numpy as np
 
 
-class DepthFirstAgent(PokerPlayer):
+class GreedyAgentImproved(PokerPlayer):
     def __init__(self, current_hand=None, stack=300, action=None, action_value=None):
-        super().__init__(current_hand_= current_hand, stack_=300, action_=action , action_value_=action_value)
-        self.amountOfNodesExtended = 0
+        super().__init__(current_hand_= current_hand, stack_=400, action_=action , action_value_=action_value)
+        self.amountOfNodesExpanded = 0
 
-    ''' def evaluateStates(self,states):
+    def evaluateStates(self,states):
+        winningStates = []
         extended = []
         for state in states:
             currentState = PokerGame.copy_state(state)
@@ -20,36 +21,28 @@ class DepthFirstAgent(PokerPlayer):
             while not doneWithStateChild:
                 for childState in childStates:
                     if childState not in extended:
-                        childState.depth = childState.parent_state.depth + 1
                         extended.append(childState)
                         self.amountOfNodesExpanded += 1
+                        #print(childState.agent.stack - childState.opponent.stack)
                         # Abandon expansion of branch more than 4 hands are dealt
-                        if childState.nn_current_hand > 4 or childState.depth > 1:
+                        if childState.nn_current_hand > 4 :
                             break
                         # If branch still interesting, check if current state is winning state,
                         # also check that the current state is a showdown.
                         elif (childState.agent.stack - childState.opponent.stack) >= 100 and childState.phase == "SHOWDOWN" :
+                            winningStates.append(childState)
                             doneWithStateChild = True
                             print("FOUND WIN IN {} hands".format(childState.nn_current_hand))
-                            return childState
                             break
                         # If current state is not a winning state but still interesting, 
                         # add the states child states to the list of states to check
-                        #childStates.extend(PokerGame.get_next_states(childState)[:])
-                        #Breadth first
                         childStates.extend(PokerGame.get_next_states(childState)[:])
 
-                        # DEPTH FIRST IMPL
-                        #nextStates = PokerGame.get_next_states(childState)
-                        #if(nextStates != None):
-                            #childStates = nextStates + childStates
-                        
-        return None '''
+                        childStates.sort(key= lambda state: state.nn_current_hand, reverse = True)   
+                        # Improved Greedy Search with this heuristic, also sorts the list according to the amount of 
+                        childStates.sort(key= lambda state: state.agent.stack - state.opponent.stack, reverse =True)
 
-    def evaluateStates(self,state):
-        returnStates = []
-
-        state.depth = state.parent_state.depth + 1
-        returnStates.extend(PokerGame.get_next_states(state))
-        self.amountOfNodesExtended += len(returnStates)
-        return returnStates
+        winningStates.sort(key= lambda state: state.nn_current_hand)
+        print("Hands required: {} ".format(winningStates[0].nn_current_hand))
+        
+        return [winningStates[0]]
