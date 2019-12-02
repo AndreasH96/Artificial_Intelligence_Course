@@ -57,7 +57,7 @@ class PokerGame():
                             
     def getResultData(self):
 
-        resultData = {"AgentStack": self.end_state_.agent.stack, "OpponentStack": self.end_state_.opponent.stack,"Expanded": self.agent.amountOfNodesExtended, "Hands": self.end_state_.nn_current_hand}
+        resultData = {"AgentType":type(self.agent).__name__,"AgentStack": self.end_state_.agent.stack, "OpponentStack": self.end_state_.opponent.stack,"Expanded": self.agent.amountOfNodesExtended, "Hands": self.end_state_.nn_current_hand}
         return resultData
          
     def printResultingState(self):
@@ -105,20 +105,20 @@ def get_next_states(last_state):
                 _state_.dealing_cards()
                 
             if _action_ == 'CALL':
+                if _state_.agent.stack >= 5:
+                    _state_.phase = 'SHOWDOWN'
+                    _state_.agent.action = _action_
+                    _state_.agent.action_value = 5
+                    _state_.agent.stack -= 5
+                    _state_.pot += 5
 
-                _state_.phase = 'SHOWDOWN'
-                _state_.agent.action = _action_
-                _state_.agent.action_value = 5
-                _state_.agent.stack -= 5
-                _state_.pot += 5
+                    _state_.showdown()
 
-                _state_.showdown()
-
-                _state_.nn_current_hand += 1
-                _state_.nn_current_bidding = 0
-                _state_.pot = 0
-                _state_.parent_state = last_state
-                states.append(_state_)
+                    _state_.nn_current_hand += 1
+                    _state_.nn_current_bidding = 0
+                    _state_.pot = 0
+                    _state_.parent_state = last_state
+                    states.append(_state_)
 
             elif _action_ == 'FOLD':
 
@@ -134,7 +134,7 @@ def get_next_states(last_state):
 
 
             elif _action_ in BETTING_ACTIONS:
-                if(_state_.agent.stack > int(_action_[3:])):
+                if _state_.agent.stack >= int(_action_[3:]):
                     _state_.phase = 'BIDDING'
                     _state_.agent.action = _action_
                     _state_.agent.action_value = int(_action_[3:])

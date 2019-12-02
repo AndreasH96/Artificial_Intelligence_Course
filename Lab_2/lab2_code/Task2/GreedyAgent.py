@@ -15,6 +15,4 @@ class GreedyAgent(PokerPlayer):
     def evaluateState(self,stateQueue):
         stateQueue.sort(key= lambda childState: childState.nn_current_hand)
         childStates = PokerGame.get_next_states(stateQueue.pop(0))
-        #childStates.sort(key= lambda childState: childState.agent.stack - childState.opponent.stack, reverse =True)
-        
-        return (childStates)
+        return childStates
