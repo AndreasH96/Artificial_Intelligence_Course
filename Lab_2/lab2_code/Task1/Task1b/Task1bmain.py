@@ -32,8 +32,8 @@ resultsEuclidean = euclideanAgent.search()
 print("Nodes expanded: Custom: {}   A*: {}  ".format(results["Expanded"], resultsEuclidean["Expanded"]))
 print("Pathlength: Custom: {}    A*: {} ".format(results["PathLenght"], resultsEuclidean["PathLenght"]))
 
-plotMap(results["Map"],results["Path"],"Type: {}, Nodes: {}, PathL: {}".format(agent.description,results["Expanded"],results["PathLenght"]))
-plotMap(resultsEuclidean["Map"],resultsEuclidean["Path"],"Type: {}, Nodes: {}, PathL: {}".format(euclideanAgent.description,resultsEuclidean["Expanded"],resultsEuclidean["PathLenght"]))
-plt.show()
+#plotMap(results["Map"],results["Path"],"Type: {}, Nodes: {}, PathL: {}".format(agent.description,results["Expanded"],results["PathLenght"]))
+#plotMap(resultsEuclidean["Map"],resultsEuclidean["Path"],"Type: {}, Nodes: {}, PathL: {}".format(euclideanAgent.description,resultsEuclidean["Expanded"],resultsEuclidean["PathLenght"]))
+#plt.show()
 
 
