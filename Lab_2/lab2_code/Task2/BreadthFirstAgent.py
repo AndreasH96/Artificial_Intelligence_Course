@@ -6,11 +6,12 @@ import PokerGame
 import numpy as np
 
 
-class DepthFirstAgent(PokerPlayer):
+class BreadthFirstAgent(PokerPlayer):
     def __init__(self, current_hand=None, stack=400, action=None, action_value=None):
         super().__init__(current_hand_= current_hand, stack_=400, action_=action , action_value_=action_value)
         self.amountOfNodesExtended = 0
-        self.hasDepthLimit = True
-
+        self.hasDepthLimit = False
+        
     def evaluateState(self,stateQueue):
-        return PokerGame.get_next_states(stateQueue.pop(-1))
+        test = stateQueue.pop(0)
+        return PokerGame.get_next_states(test)

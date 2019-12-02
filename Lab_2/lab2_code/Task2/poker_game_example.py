@@ -142,14 +142,14 @@ class GameState(object):
         print('**************** end ******************')
 
 # copy given state in the argument
-def copy_state(game_state):
+""" def copy_state(game_state):
     _state = copy.copy(game_state)
     _state.agent = copy.copy(game_state.agent)
     _state.opponent = copy.copy(game_state.opponent)
     return _state
 
 """
-successor function for generating next state(s)
+#successor function for generating next state(s)
 """
 def get_next_states(last_state):
 
@@ -277,7 +277,7 @@ def get_next_states(last_state):
             exit()
         return states
 
-
+ """
 
 
 """
