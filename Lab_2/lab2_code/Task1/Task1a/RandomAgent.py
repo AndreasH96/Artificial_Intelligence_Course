@@ -15,7 +15,8 @@ class RandomAgent(SearchAgent):
         returnNode = self.nodeList[0]
         self.nodeList.remove(returnNode)
         return returnNode
-
+    def getType(self):
+        return type(self).__name__
     def calculateCost(self,nodeCoordinates):
         return np.random.randint(1,5)
     

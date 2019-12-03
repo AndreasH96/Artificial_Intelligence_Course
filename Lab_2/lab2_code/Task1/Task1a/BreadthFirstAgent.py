@@ -8,7 +8,8 @@ class BreadthFirstAgent(SearchAgent):
         super().__init__(searchMap, startPosition, goalPosition)
         self.description = "Breadth First Algorithm"
         self.returnToPreviousAllowed = False
-        
+    def getType(self):
+        return type(self).__name__
     def addNode(self,node):
         self.nodeList.append(node)
     def getNextNode(self):

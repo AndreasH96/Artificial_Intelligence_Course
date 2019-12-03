@@ -11,7 +11,7 @@ class GreedyAgent(PokerPlayer):
         super().__init__(current_hand_= current_hand, stack_=400, action_=action , action_value_=action_value)
         self.amountOfNodesExtended = 0
         self.hasDepthLimit = False
-
+    
     def evaluateState(self,stateQueue):
         stateQueue.sort(key= lambda childState: childState.nn_current_hand)
         childStates = PokerGame.get_next_states(stateQueue.pop(0))

@@ -15,21 +15,25 @@ Game flow:
 Two agents will keep playing until one of them lose 100 coins or more.
 """
 INIT_AGENT_STACK = 400
-resultData = []#{"GreedyAgent":{}, "GreedyAgentImproved":{},"DepthFirstAgent":{},"BreadthFirstAgent":{},"RandomAgent":{}}
+resultData = []
 agents=[GreedyAgent(current_hand=None, stack=INIT_AGENT_STACK, action=None, action_value=None),GreedyAgentImproved(current_hand=None, stack=INIT_AGENT_STACK, action=None, action_value=None), 
  DepthFirstAgent(current_hand=None, stack=INIT_AGENT_STACK, action=None, action_value=None),BreadthFirstAgent(current_hand=None, stack=INIT_AGENT_STACK, action=None, action_value=None),
  RandomAgent(current_hand=None, stack=INIT_AGENT_STACK, action=None, action_value=None) ]
 
 def analyseResults(resultList):
     analysedResults = {"AgentType":resultList[0]["AgentType"]
-        , "AgentStack":0,"OpponentStack":0 , "Expanded": 0,"ExpandSpan":0, "Hands": 0}
+        , "AgentStack":0,"OpponentStack":0 ,"PathLength":0 ,"Expanded": 0,"Wins":0, "Hands": 0}
     for result in resultList:
         for key in result.keys():
             if key != "AgentType":
                 analysedResults[key] += result[key]
+                
+        if result["AgentStack"] > result["OpponentStack"]:
+            analysedResults["Wins"] += 1
+
     for key in analysedResults.keys():
-        if key != "AgentType":
-            analysedResults[key] = analysedResults[key]/(resultList.index(result) + 1)
+        if key != "AgentType" and key != "Wins":
+            analysedResults[key] = analysedResults[key]/len(resultList)
     return analysedResults
 
 def runGame(game):

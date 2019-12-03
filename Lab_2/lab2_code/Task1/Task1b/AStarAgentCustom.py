@@ -5,15 +5,22 @@ from Node import Node
 from SearchAgent import SearchAgent
 class AStarAgentCustom(SearchAgent):
 
-    def __init__(self, searchMap, startPosition, goalPosition, boardInfo):
+    def __init__(self, searchMap = None, startPosition = None, goalPosition = None, boardInfo = None):
         super().__init__(searchMap, startPosition, goalPosition)
         self.description = "A* Custom"
-        self.boardInfo = {"TopY": boardInfo[0], "BottomY": boardInfo[1], "MiddleX": boardInfo[2]}
+        if boardInfo != None:
+            self.boardInfo = {"TopY": boardInfo[0], "BottomY": boardInfo[1], "MiddleX": boardInfo[2]}
         self.returnToPreviousAllowed = True
+        
+    def setBoardInfo(boardInfo):
+        self.boardInfo = {"TopY": boardInfo[0], "BottomY": boardInfo[1], "MiddleX": boardInfo[2]}
         
     def addNode(self,node):
         self.nodeList.append(node)
         self.nodeList.sort(key= lambda node: node.cost)
+        
+    def getType(self):
+        return type(self).__name__
 
     def getNextNode(self):
         returnNode = self.nodeList[0]

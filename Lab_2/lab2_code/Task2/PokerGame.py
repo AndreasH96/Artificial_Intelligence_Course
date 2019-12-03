@@ -7,7 +7,7 @@ import copy
 
 MAX_HANDS = 4
 INIT_AGENT_STACK = 400
-MAX_EXTENDED = 10000
+MAX_EXTENDED = 100000
 
 class PokerGame():
     
@@ -27,6 +27,7 @@ class PokerGame():
         self.round_init = True
         self.end_state_ = None
         self.amountOfHandsDealed = 0
+        self.agent.amountOfNodesExtended = 0
     
     def shouldEndGame(self,state):
             if state.phase == 'SHOWDOWN' and (state.agent.stack  >= 500)  or (self.agent.hasDepthLimit and self.agent.amountOfNodesExtended > MAX_EXTENDED) :
@@ -56,8 +57,12 @@ class PokerGame():
                 #--------------------------------------------------------
                             
     def getResultData(self):
-
-        resultData = {"AgentType":type(self.agent).__name__,"AgentStack": self.end_state_.agent.stack, "OpponentStack": self.end_state_.opponent.stack,"Expanded": self.agent.amountOfNodesExtended, "Hands": self.end_state_.nn_current_hand}
+        nodeDepth = 0
+        currentNode = self.end_state_
+        while currentNode.parent_state != None:
+            currentNode = currentNode.parent_state
+            nodeDepth +=1
+        resultData = {"AgentType":type(self.agent).__name__,"AgentStack": self.end_state_.agent.stack, "OpponentStack": self.end_state_.opponent.stack,"PathLength":nodeDepth,"Expanded": self.agent.amountOfNodesExtended, "Hands": self.end_state_.nn_current_hand}
         return resultData
          
     def printResultingState(self):

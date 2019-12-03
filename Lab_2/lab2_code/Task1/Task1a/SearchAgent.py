@@ -6,8 +6,10 @@ from Node import Node
 class SearchAgent:
     def __init__(self, searchMap = None, startPosition = None, goalPosition= None):
         self.nodeList = []
-        self.startNode = Node(parent = 0, nodeCoordinates = startPosition, cost= 0 ,depth = 0)
-        self.goalNode = Node(parent = 0, nodeCoordinates = goalPosition, cost= 0 , depth = 0)
+        if startPosition != None:
+            self.startNode = Node(parent = 0, nodeCoordinates = startPosition, cost= 0 ,depth = 0)
+        if goalPosition != None:
+            self.goalNode = Node(parent = 0, nodeCoordinates = goalPosition, cost= 0 , depth = 0)
         self.searchMap = searchMap
         self.path = [[],[]]
         self.amountOfNodesExpanded = 0
@@ -18,7 +20,10 @@ class SearchAgent:
     def setStartAndGoalPosition(self, startPosition, goalPosition):
         self.startNode = Node(parent = 0, nodeCoordinates = startPosition, cost= 0 ,depth = 0)
         self.goalNode = Node(parent = 0, nodeCoordinates = goalPosition, cost= 0 , depth = 0)
-        
+
+    def getType(self):
+        return None
+
     def addNode(self,node):
         pass
     def getNextNode(self):
@@ -66,5 +71,5 @@ class SearchAgent:
                 self.addNode(nextNode)
                 self.amountOfNodesExpanded += 1
 
-        return {"Map" : self.searchMap, "Path":  self.path,  "PathLenght" : len(self.path[0]), "Expanded" : self.amountOfNodesExpanded} 
+        return {"AgentType":self.getType(), "Map": self.searchMap, "Path":  self.path,  "PathLenght" : len(self.path[0]), "Expanded" : self.amountOfNodesExpanded} 
 

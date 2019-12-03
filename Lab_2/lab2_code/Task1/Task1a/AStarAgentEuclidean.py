@@ -14,6 +14,9 @@ class AStarAgentEuclidean(SearchAgent):
         self.nodeList.append(node)
         self.nodeList.sort(key= lambda node: node.cost)
 
+    def getType(self):
+        return type(self).__name__
+        
     def getNextNode(self):
         returnNode = self.nodeList[0]
         self.nodeList.remove(returnNode)
