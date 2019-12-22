@@ -1,0 +1,57 @@
+2.b
+    1.  p(Cause=Animal|Season=Autumn)= 0.81%
+    2.  p(Season=Autumn|Cause=Animal)= 33.64%
+    3.  p(Season=Summer|Cause=Thunder)= 75.33%
+    4.  p(Outage duration=Otg≤1|Facility part = Ground cable pillar)= 29.85%
+    5.  p(Facility part=Ground cable pillar|Switchgear=H7, Cause=Fuse break)= 81.79% 
+    6.  p(Facility  part=Ground  feeder  cable  in  ground|Cause=(Digging,  Fabricationfault), Switchgear=H7, Season=Summer)= 49.61%
+    7.  p(Facility part=Ground feeder cable in ground|Cause=¬(Digging, Fabricationfault), Switchgear=H7, Season=Summer)= 27.08%
+    8.  p(Cause=Digging|Facility part = OH line, Switchgear=H7)= 0.00%
+    9.  p(Facility part = Ground cable pillar|Outrage duration=Otg >2= 45.21%
+    10. p(Cause=Unknown|Year=before2011)p(Cause=Unknown|Year=after2011)= (5.81%)/(2.36%) = 2.462
+
+2.c
+    1.  p(Cause= Sabotage | Year = before2011) = 1.40%
+    2.  p(Facility part = Ground cable pillar | Outage duration = 1<Otg<=2, Cause = Fabricationfault) = 40.18%
+    3.  p(Outage duration = Otg<1 | Season = Spring, Cause = Fuse break) = 44.59%
+    4.  p(Facility part = OH line |Season = Autumn, Cause = Wind) = 40.8%
+    5.  p(Facility part = Metal shielded sec.subst | Cause = Overload, Switchgear = H4) = 6.61%
+    6.  p(Year = after2011 | Outage duration = Otg>2, ¬Cause = Digging) = 59.56%
+    7.  p(Facility part = Primary substation | Outage duration = Otg<=1, Cause = Incorrect operating) = 11.27%
+    8.  p(Season = Autumn | Year = after2011, Cause = Falling tree by wind) = 71.29%
+    9.  p(Year = before2011 | Switchgear = H10, Cause = Other) = 99.76%
+    10. p(Facility part = Ground cable fuse-/apparatus box | Switchgear= (H2,H3) Cause = Traffic) = 12.10 %
+
+
+2.d
+Examples:
+    1. Parent value: p(Season = Spring) = 25.89% , Child Value: p(Cause = Rain) = 0.18%, p(Season = Spring | Cause = Rain) = 71.06%, p(Cause = Rain | Season = Spring) = 0.48%
+    2. Parent value: p(Switchgear = H7) = 41.50% , Child Value: p(Facility part = OH line) = 3.26%, p(Switchgear = H7 | Facility part = OH line) = 69.11%, p(Facility part = OH line | Switchgear = H7) = 5.42%
+    3. Parent value: p(Season = Winter) = 23.72% , Child Value: p(Cause = Overload) = 9.41%, p(Season = Winter | Cause = Overload) = 46.31%, p(Cause = Overload | Season = Winter) = 18.38% 
+
+2.e)
+"Ground feeder cable in ground" is maximised at a value of 99.94% with Season = Summer, Cause = Other, Switchgear = H7
+"Fabricationfault" is maximised at a value of 99.85% with Season = Spring, Year = after2011, Outage duration = Otg>2, Switchgear = H3, Facility part = Other secondary substation
+
+
+2.f)
+3 highly positive correlations:
+    1. Facility part = Ground cable pillar is highly correlated with Cause = Fuse Break 
+        p(Facility part = Ground cable pillar | Cause = Fuse Break) = 78.44%
+
+    2. Facility part = Ground feeder cable in ground is highly correlated with Cause = Digging 
+        p(Facility part = Ground feeder cable in ground | Cause = Digging) = 56.20%
+
+    3. Cause = Fabricationfault is highly correlated with Outage duration = Otg>2
+        p(Cause = Fabricationfault | Outage duration = Otg>2) = 42.82%
+
+3 highly negative correlations:
+    1. Cause = Rain has a low correlation with Season = Autumn
+        p(Cause = Rain | Season = Autumn) = 0.00%
+    
+    2. Facility part = Ground cable pillar has a low correlation with Cause = Falling tree by wind
+        p(Facility part = Ground cable pillar | Cause = Falling tree by wind) = 4.86%
+    
+    3. Cause = Fuse Break has a low correlation with Outage duration = Otg>2
+        p(Cause = Fuse break | Outage duration = Otg>2) = 9.98%
+ 
