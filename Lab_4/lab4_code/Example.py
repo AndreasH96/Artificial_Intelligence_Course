@@ -1,9 +1,10 @@
 import numpy as np
-from sklearn.cross_validation import train_test_split
+#from sklearn.cross_validation import train_test_split
 from sklearn import svm
+from sklearn.model_selection import train_test_split
 
 # import data
-Data = np.loadtxt(open("Lab4Data.csv", "rb"), delimiter=";", skiprows=1)
+Data = np.loadtxt(open("data/Lab4Data.csv", "rb"), delimiter=";", skiprows=1)
 print ('*******************************************')
 print('Length of Total Data:', len(Data))
 
