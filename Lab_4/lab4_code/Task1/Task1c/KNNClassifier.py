@@ -34,9 +34,12 @@ class KNNClassifier():
                 distance = pow(sum([pow(dataPoint1[x] - dataPoint2[x],p) for x in range(length)]), (1/p))
 
             elif self.distanceMethod == "cosine":
-                distance = dot(dataPoint1[0:8],dataPoint2)/(norm(dataPoint1)*norm(dataPoint2))
-
-            if self.distanceMethod in ["manhattan","cosine"]:
+                distance = dot(dataPoint1[0:length],dataPoint2)/(norm(dataPoint1)*norm(dataPoint2))
+                #print(distance)
+            elif self.distanceMethod == "chebyshev":
+                distance = max([abs(dataPoint1[x] - dataPoint2[x]) for x in range(length)])
+            
+            if self.distanceMethod in ["manhattan",'cosine']:
                     distance = 1/distance
             return distance
 

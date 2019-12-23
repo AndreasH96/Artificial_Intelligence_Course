@@ -5,10 +5,10 @@ data = np.loadtxt(open("lab4_code\Task1\Lab4Data.csv", "rb"), delimiter=";", ski
 
 resultingAccuracys = []
 #Generate the K-range, always have an odd K to avoid ties
-kRange = np.arange(1,5,2)
+kRange = np.arange(1,20,2)
 print (kRange)
 for k in kRange:
-    knnClassifier = KNNClassifier(data,k)
+    knnClassifier = KNNClassifier(data,k,"cosine")
     resultingAccuracys.append(knnClassifier.analyzeData(printStats=True))
     print("K-value:{}".format(k))
 
