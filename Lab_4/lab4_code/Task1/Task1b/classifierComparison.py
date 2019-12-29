@@ -28,8 +28,6 @@ classifiers = [MLPClassifier(alpha=1, max_iter=1000),
 scores = []
 colors = ['g', 'r', 'b']
 for name, classifier, color in zip(classifierNames, classifiers, colors):
-
-    
     roundNumberList = np.arange(1, 10, 1)
 
     for roundNumber in roundNumberList:

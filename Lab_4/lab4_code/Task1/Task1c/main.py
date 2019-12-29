@@ -9,47 +9,71 @@ data = np.loadtxt(open("lab4_code\Task1\Lab4Data.csv", "rb"),
 
 trainSet, testSet = train_test_split(data, test_size=0.2)
 
-methods = ["manhattan","euclidean"]
-k_values = np.arange(1,100,2)
+sklearnmethods = ["manhattan","euclidean"]
+k_values = np.arange(1,10,2)
 max_k = max(k_values)
 trainSetInput = trainSet[:, :8]
 trainSetTarget = trainSet[:, 9]
 
 testSetInput = testSet[:, :8]
 testSetTarget = testSet[:, 9]
-legends = ["Sklearn:Manhattan","Custom:Manhattan","Sklearn:Euclidean", "Custom:Euclidean" , "Custom:Cosine", "Custom:Chebyshev"]
-
+legends = ["Sklearn:Manhattan","Sklearn:Euclidean","Custom:Manhattan", "Custom:Euclidean" , "Custom:Cosine", "Custom:Chebyshev"]
+maxScores = []
 sklearnColorCustomization = ['g*-','r*-']
 customColorCustomization = ['mo:','co:','wo:','yo:']
 params = {'legend.fontsize': 16,
           'legend.handlelength': 2}
 plt.rcParams.update(params)
 plt.style.use('dark_background')
-for p,method in enumerate(methods,1):
+
+print("===SKLEARN METHODS===")
+for p,method in enumerate(sklearnmethods,0):
     sklearnScores = []
-    customScores = []
+    maxScoreAndK = {"K":0,"score":0}
     for k in k_values:
-        
         print("{}:|{}{}|".format(method, "#"*k,"-"*(max_k-k) ))
-        sklearnKNN = KNeighborsClassifier(n_neighbors=k,weights='uniform',p=p)
+        sklearnKNN = KNeighborsClassifier(n_neighbors=k,weights='uniform',p=p + 1)
         sklearnKNN.fit(trainSetInput,trainSetTarget)
-        sklearnScores.append(sklearnKNN.score(testSetInput,testSetTarget) )
+        score = sklearnKNN.score(testSetInput,testSetTarget) 
+        if score > maxScoreAndK.get("score"):
+            maxScoreAndK["K"] = k 
+            maxScoreAndK["score"] = score
+        sklearnScores.append(score)
+    maxScores.append(maxScoreAndK)
 
-
-        customKNN = KNNClassifier(data=data,K_val = k,distanceMethod = method)
-        customScores.append(customKNN.analyzeData() / 100.0)
-    plt.plot(k_values, sklearnScores, '{}'.format(sklearnColorCustomization[p-1]))
-    plt.plot(k_values, customScores, '{}'.format(customColorCustomization[p-1]))
+    plt.plot(k_values, sklearnScores, '{}'.format(sklearnColorCustomization[p]))
+    #plt.annotate(s = maxScoreAndK["score"], xy = (maxScoreAndK["K"] + 0.05,maxScoreAndK["score"] +0.01),size = 20)
+    #plt.text(s = "{}:{}:k={}".format(method,maxScoreAndK["score"],maxScoreAndK["K"]), x = maxScoreAndK["K"],y= maxScoreAndK["score"] +0.01,fontsize= 12)
+    
 
 solelyCustomMethods = ['cosine', 'chebyshev']
-for methodIndex,method in enumerate(solelyCustomMethods,2):
+
+customMethods = ["manhattan","euclidean","cosine","chebyshev"]
+
+print("===CUSTOM METHODS===")
+for methodIndex,method in enumerate(customMethods,0):
     customScores = []    
+    maxScoreAndK = {"K":0,"score":0}
     for k in k_values:
         print("{}:|{}{}|".format(method, "#"*k,"-"*(max_k-k) ))
         customKNN = KNNClassifier(data=data,K_val = k,distanceMethod = method)
-        customScores.append(customKNN.analyzeData() / 100.0)
 
-    plt.plot(k_values, customScores, '{}'.format(customColorCustomization[methodIndex   ]))
+        score = customKNN.analyzeData() / 100.0
+        if score > maxScoreAndK.get("score"):
+            maxScoreAndK["K"] = k 
+            maxScoreAndK["score"] = score
+
+        customScores.append(score)
+
+    maxScores.append(maxScoreAndK)
+
+    plt.plot(k_values, customScores, '{}'.format(customColorCustomization[methodIndex]))
+    #plt.text(s = "{}:{}:k={}".format(method,maxScoreAndK["score"],maxScoreAndK["K"]), x = maxScoreAndK["K"],y= maxScoreAndK["score"] +0.01,fontsize= 12)
+
+
+for index, maxScore in enumerate(maxScores):
+    legends[index] = legends[index] + ", Max:{}, K:{}".format(maxScore["score"],maxScore["K"])
+
 plt.legend(legends)
 plt.ylim(0.2, 1)
 plt.xticks(np.arange(min(k_values), max(k_values)+1, 4.0))
