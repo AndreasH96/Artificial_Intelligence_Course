@@ -6,6 +6,7 @@ import math
 from numpy import dot
 from numpy.linalg import norm
 from collections import Counter
+from sklearn.model_selection import cross_val_score
 #distanceFunctions = ["euclideanDistance", "manhattanDistance", "cosineDistance"]
 
 class KNNClassifier():
@@ -41,7 +42,7 @@ class KNNClassifier():
 
         neighborDistances = list(map(lambda 
             trainingDataPoint: (trainingDataPoint,distance(trainingDataPoint,dataPoint,self.DATALENGTH)) ,trainingSet))
-
+        
         neighborDistances.sort(key=lambda point: point[1])
 
         return [neighbor[0] for neighbor in neighborDistances[:k]]
@@ -77,6 +78,7 @@ class KNNClassifier():
             print('Number of Correct Predictions:', Number_of_Correct_Predictions, 'Out_of:', len(predictedOutcome),
                 'Number of Test Data')
             print('Accuracy of Prediction in Percent:', testAccuracy) 
+            print("CROSS CAL:{}".format(cross_val_score(self,self.testSetInput,self.testSetTarget,cv=100)))
         return testAccuracy
              
             

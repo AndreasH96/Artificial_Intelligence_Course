@@ -23,27 +23,20 @@ class KNNClassifier():
     
     def getKNNeighbors(self,trainingSet, dataPoint, k):
         
-        """ def euclideanDistance(dataPoint1, dataPoint2, length):
-            distance = 0
-            distance = math.sqrt(sum([pow(dataPoint1[x] - dataPoint2[x],2) for x in range(length)]))
-            return distance """
         def distance(dataPoint1, dataPoint2, length):
             manhattanOrEucliean = ["manhattan", "euclidean"]
+
             if self.distanceMethod in manhattanOrEucliean:
                 p = manhattanOrEucliean.index(self.distanceMethod) + 1
                 distance = pow(sum([pow(dataPoint1[x] - dataPoint2[x],p) for x in range(length)]), (1/p))
 
             elif self.distanceMethod == "cosine":
-                distance = dot(dataPoint1[0:8],dataPoint2)/(norm(dataPoint1)*norm(dataPoint2))
+                distance = dot(dataPoint1[0:8],dataPoint2)/(norm(dataPoint1[0:8])*norm(dataPoint2))
 
             if self.distanceMethod in ["manhattan","cosine"]:
                     distance = 1/distance
             return distance
 
-
-
-        """ localFunctions = locals()
-        distanceFunction = distanceFunctions[self.distanceFunctionIndex] """
         neighborDistances = list(map(lambda 
             trainingDataPoint: (trainingDataPoint,distance(trainingDataPoint,dataPoint,self.DATALENGTH)) ,trainingSet))
 

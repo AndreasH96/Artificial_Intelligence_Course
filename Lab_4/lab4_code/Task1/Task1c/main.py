@@ -10,7 +10,7 @@ data = np.loadtxt(open("lab4_code\Task1\Lab4Data.csv", "rb"),
 trainSet, testSet = train_test_split(data, test_size=0.2)
 
 sklearnmethods = ["manhattan","euclidean"]
-k_values = np.arange(1,10,2)
+k_values = np.arange(1,2,2)
 max_k = max(k_values)
 trainSetInput = trainSet[:, :8]
 trainSetTarget = trainSet[:, 9]
@@ -21,10 +21,12 @@ legends = ["Sklearn:Manhattan","Sklearn:Euclidean","Custom:Manhattan", "Custom:E
 maxScores = []
 sklearnColorCustomization = ['g*-','r*-']
 customColorCustomization = ['mo:','co:','wo:','yo:']
-params = {'legend.fontsize': 16,
-          'legend.handlelength': 2}
-plt.rcParams.update(params)
+
+font = {'weight' : 'bold',
+        'size'   : 22}
+plt.rc('font',**font)
 plt.style.use('dark_background')
+
 
 print("===SKLEARN METHODS===")
 for p,method in enumerate(sklearnmethods,0):
@@ -58,7 +60,7 @@ for methodIndex,method in enumerate(customMethods,0):
         print("{}:|{}{}|".format(method, "#"*k,"-"*(max_k-k) ))
         customKNN = KNNClassifier(data=data,K_val = k,distanceMethod = method)
 
-        score = customKNN.analyzeData() / 100.0
+        score = customKNN.analyzeData(True) / 100.0
         if score > maxScoreAndK.get("score"):
             maxScoreAndK["K"] = k 
             maxScoreAndK["score"] = score
@@ -72,10 +74,11 @@ for methodIndex,method in enumerate(customMethods,0):
 
 
 for index, maxScore in enumerate(maxScores):
-    legends[index] = legends[index] + ", Max:{}, K:{}".format(maxScore["score"],maxScore["K"])
+    legends[index] += " Max accuracy:{} Round:{}".format(maxScore["score"],maxScore["K"])
 
 plt.legend(legends)
 plt.ylim(0.2, 1)
 plt.xticks(np.arange(min(k_values), max(k_values)+1, 4.0))
-plt.savefig("comparison.png")
+plt.ylabel("Accuracy")
+plt.xlabel("K-Value")
 plt.show()

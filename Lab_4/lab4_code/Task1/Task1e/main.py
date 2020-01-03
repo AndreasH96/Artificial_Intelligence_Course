@@ -5,24 +5,25 @@ data = np.loadtxt(open("lab4_code\Task1\Lab4Data.csv", "rb"), delimiter=";", ski
 
 resultingAccuracys = []
 #Generate the K-range, always have an odd K to avoid ties
-kRange = np.arange(1,10,2)
+kRange = np.arange(1,50,2)
 
 
-params = {'legend.fontsize': 16,
-          'legend.handlelength': 2}
-plt.rcParams.update(params) 
+font = {'weight' : 'bold',
+        'size'   : 22}
+plt.rc('font',**font)
 plt.style.use('dark_background')
 
+
 maxAccuracy = {"K":0,"accuracy":0}
+
 for k in kRange:
-    
     knnRegressor = KNNRegression(data,7,k,'euclidean')
-    resultingError = knnRegressor.analyzeData(printStats=True)
-    resultingAccuracys.append(resultingError)
+    resultingAccuracy = knnRegressor.analyzeData(printStats=True)
+    resultingAccuracys.append(resultingAccuracy)
     print("K-value:{}".format(k))
-    if resultingError > maxAccuracy["accuracy"]:
+    if resultingAccuracy > maxAccuracy["accuracy"]:
         maxAccuracy["K"] = k
-        maxAccuracy["accuracy"] = resultingError 
+        maxAccuracy["accuracy"] = resultingAccuracy 
 
 plt.plot(kRange,resultingAccuracys,'go:')
 plt.xticks(np.arange(min(kRange), max(kRange)+1, 4.0))
@@ -30,7 +31,6 @@ plt.xticks(np.arange(min(kRange), max(kRange)+1, 4.0))
 legend = ["Max accuracy:{}, K:{}".format(round(maxAccuracy["accuracy"],4), maxAccuracy["K"])]
 
 
-plt.title("KNN-Regression")
 plt.xlabel("K-Value")
 plt.ylabel("Accuracy")
 plt.legend(legend)

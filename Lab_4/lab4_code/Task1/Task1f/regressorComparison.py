@@ -35,39 +35,33 @@ regressors = [MLPRegressor(alpha=1, max_iter=1000),
                DecisionTreeRegressor(max_depth=6), RandomForestRegressor(max_depth=5, n_estimators=10, max_features=1)]
 
 # matplot styling
-params = {'legend.fontsize': 16,
-          'legend.handlelength': 2}
-plt.rcParams.update(params) 
+font = {'weight' : 'bold',
+        'size'   : 22}
+plt.rc('font',**font)
 plt.style.use('dark_background')
 
 colors = ['g', 'r', 'c']
-roundNumberList = np.arange(1, 10, 1)
+roundNumberList = np.arange(1, 50, 1)
 
 labels = []
 for name, regressor, color in zip(regressorNames, regressors, colors):
-    minAccuracy = {"value":100,"K":0}
-    maxAccuracy = {"value":0,"K":0}
+    maxAccuracy = {"value":0,"round":0}
     scores = []
     for roundNumber in roundNumberList:
         regressor.fit(trainSetInput, trainSetTarget)
         score = regressor.score(testSetInput, testSetTarget)
         scores.append(score)
-        
-        if score < minAccuracy["value"]:
-            minAccuracy["value"] = score
-            minAccuracy["K"] = roundNumber
         if score > maxAccuracy["value"]:
             maxAccuracy["value"] = score
-            maxAccuracy["K"] = roundNumber
+            maxAccuracy["round"] = roundNumber
 
     # Add max and min accuracy to label of regressor
-    labels.append(name + " Max:{},K:{} Min{},K:{}".format(round(maxAccuracy["value"],4),maxAccuracy["K"],
-        round(minAccuracy["value"],4),minAccuracy["K"]))
+    labels.append(name + " Max accuracy:{} Round:{}".format(round(maxAccuracy["value"],4),maxAccuracy["round"]))
     plt.plot(roundNumberList, scores, '{}o:'.format(color))
-    
-plt.title("Sklearn Regression")
-plt.xlabel("K-Value")
-plt.ylabel("Accuracy")
+
+
+plt.xlabel("Round")
+plt.ylabel("$R^{2}$ Score")
 plt.legend(labels)
 
 plt.show()

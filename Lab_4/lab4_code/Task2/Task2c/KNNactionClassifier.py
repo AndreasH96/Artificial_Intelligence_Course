@@ -3,14 +3,12 @@ import matplotlib.pyplot as plt
 from sklearn.model_selection import train_test_split
 from numericalValues import handTypeValueLookupTable, cardValueLookupTable, actionValueLookupTable
 from pandas import DataFrame
-
 from sklearn.ensemble import RandomForestClassifier
 from sklearn.neighbors import KNeighborsClassifier
 from sklearn.tree import DecisionTreeClassifier
-
-from sklearn.svm import SVC
 from operator import itemgetter
 import re
+from sklearn.model_selection import cross_val_score
 # 2A: 1. Amount of money left for player  2. Players average bet 3. 
 
 
@@ -87,28 +85,20 @@ for dataLine in data:
 
     numericalDataLine.extend(playerAggressivity)
 
-    # Append the final action of player 2
+    # Append the 
     numericalDataLine.append(finalAction)
 
     numericalData.append(numericalDataLine)
-    print(numericalDataLine)
-    break
 
 #======= SEPARATE TRAIN AND TEST SETS ======
-trainSet, testSet = train_test_split(numericalData, test_size=0.2)
-trainSetInput = [trainSetLine[:len(trainSetLine)-1] for trainSetLine in trainSet ]
-trainSetTarget = [trainSetLine[-1] for trainSetLine in trainSet]
+
+dataInput =[dataLine[:len(dataLine)-1] for dataLine in numericalData ]
+dataTarget = [dataLine[-1] for dataLine in numericalData]
 
 
-testSetInput = [testSetLine[:len(testSetLine)-1] for testSetLine in testSet ]
-testSetTarget = [testSetLine[-1] for testSetLine in testSet]
-
-
-classifiers = [ KNeighborsClassifier(n_neighbors=9,weights='distance',p=1),
-               DecisionTreeClassifier(max_depth=7), RandomForestClassifier(max_depth=5, n_estimators=10, max_features=1)]
+classifiers = [ ]
 
 #======== MATPLOT SETTINGS ===========
-legends = ["KNN", "DecisionTree", "Random Forest"]
 font = {'weight' : 'bold',
         'size'   : 22}
 plt.rc('font',**font)
@@ -116,26 +106,26 @@ plt.style.use('dark_background')
 colors = ['g', 'r', 'c']
 
 #========= EVALUATE DATA THROUGH CLASSIFIERS =====
-roundNumberList = list(np.arange(1, 100, 1))
-for classifier, color in zip(classifiers, colors):
-    scores = list()
+kRange = list(np.arange(1, 100, 2))
+distanceAlgorithms = ["Manhattan","Euclidean"]
+for pValue, algorithmName in enumerate(distanceAlgorithms):
+    scores = []
     maxAccuracy = {"round":0,"accuracy":0}
-    for roundNumber in roundNumberList:
-        classifier.fit(trainSetInput, trainSetTarget)
-        score = classifier.score(testSetInput, testSetTarget)
-        scores.append(score)
+    for kValue in kRange:
+        classifier = KNeighborsClassifier(n_neighbors=kValue,weights='uniform',p=pValue+1)
 
-        if score > maxAccuracy["accuracy"]:
-            maxAccuracy["round"] = roundNumber
-            maxAccuracy["accuracy"] = score
-    legends[classifiers.index(classifier)] += " Max accuracy:{} Round:{}".format(maxAccuracy["accuracy"],maxAccuracy["round"])
+        score = cross_val_score(classifier, dataInput ,dataTarget)
+        scores.append(score.mean())
+        if score.mean() > maxAccuracy["accuracy"]:
+            maxAccuracy["round"] = kValue
+            maxAccuracy["accuracy"] = score.mean()
 
-    plt.plot(roundNumberList, scores, '{}o:'.format(color))
-    
-plt.legend(legends)
-plt.xlabel("Round")
+    distanceAlgorithms[pValue] += " Max accuracy:{} K:{}".format(round(maxAccuracy["accuracy"],4),maxAccuracy["round"])
+    plt.plot(kRange, scores, '{}o:'.format(colors[pValue]))
+plt.legend(distanceAlgorithms)
+
+plt.xlabel("K-Value")
 plt.ylabel("Accuracy")
-plt.ylim(0.5,1)
 plt.show()
 
 
